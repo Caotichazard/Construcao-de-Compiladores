@@ -5,9 +5,23 @@ este diretório corresponde ao Trabalho 1 da matéria de Construção de compila
 ## Grupo
 - Guilherme Locca Salomão, RA: 758569
 
+## Acesso rápido
+Segue links para acesso rapido a arquivos importantes:
+- [.jar principal](https://github.com/Caotichazard/Construcao-de-Compiladores/blob/main/Trabalho-1/LA-Lexico/target/LA-Lexico-1.0-SNAPSHOT-jar-with-dependencies.jar)
+- [Lexer](https://github.com/Caotichazard/Construcao-de-Compiladores/blob/main/Trabalho-1/LA-Lexico/src/main/antlr4/br/ufscar/dc/compiladores/la/lexico/LALexer.g4) 
+- [Classe Principal](https://github.com/Caotichazard/Construcao-de-Compiladores/blob/main/Trabalho-1/LA-Lexico/src/main/java/br/ufscar/dc/compiladores/la/lexico/Principal.java)
+
 ## Dependencias
+Este projeto foi feito com Java utilizando Maven
+
+Para executar esse programa é necessário as seguintes dependencias:
+- antlr4 4.7.2
+
+e os seguintes Plugins:
+- antlr4-maven-plugin 4.7.2
+- maven-assembly-plugin
+
 
 ## TODO
 - Comentar o codigo
-- Melhorar o Readme
 - Atender as especificações do trabalho
