@@ -23,12 +23,13 @@ e os seguintes Plugins:
 - antlr4-maven-plugin 4.7.2
 - maven-assembly-plugin
 
+## Compilação
 Tendo o projeto configurado, basta executar o comando
 `mvn compile`
 
-Após isso localizar o arquivo
-`LA-Lexico-1.0-SNAPSHOT-jar-with-dependencies.jar` 
-na pasta Target
+
+## Execução
+Localizar o arquivo `LA-Lexico-1.0-SNAPSHOT-jar-with-dependencies.jar` 
 
 Para executar o programa basta usar o seguinte comando:\
 `java -jar Caminho/para/LA-Lexico-1.0-SNAPSHOT-jar-with-dependencies.jar Caminho/para/arquivo/de/teste/arquivo_de_teste.txt Caminho/para/arquivo/de/saida/arquivo_de_saida.txt`
