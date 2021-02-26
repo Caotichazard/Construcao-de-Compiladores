@@ -34,9 +34,3 @@ Para executar o programa basta usar o seguinte comando:\
 `java -jar Caminho/para/LA-Lexico-1.0-SNAPSHOT-jar-with-dependencies.jar Caminho/para/arquivo/de/teste/arquivo_de_teste.txt Caminho/para/arquivo/de/saida/arquivo_de_saida.txt`
 
 A saida será um arquivo localizado no diretório alvo com o nome fornecido
-
-
-
-## TODO
-- Comentar o codigo
-- Atender as especificações do trabalho
