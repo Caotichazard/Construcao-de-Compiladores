@@ -48,33 +48,34 @@ public class MyErrorListener implements ANTLRErrorListener {
 
     @Override
     public void	syntaxError(Recognizer<?,?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
-        // Aqui vamos colocar o tratamento de erro customizado
-
-        Token t = (Token) offendingSymbol;
         
-        String tokenType = LALexer.VOCABULARY.getSymbolicName(t.getType());
-        String output = "vazio";
+
+        Token t = (Token) offendingSymbol;//recebe a instancia do token que ocorreu o erro
+        
+        String tokenType = LALexer.VOCABULARY.getSymbolicName(t.getType());//recebe o tipo do token segundo o vocabulario
+        String output = "";//aqui sera armazenada a string a ser impressa no terminal
         
         //System.out.println("Linha: "+t.getLine() +" erro sintatico proximo a "+t.getText());
         
-        if (tokenType != null && tokenType.equals("COMENT_NFECHADO")) {
-            output = "Linha " + t.getLine() + ": comentario nao fechado";
+        //caso o tipo de token esteja presente no vocabulario 
+        if (tokenType != null && tokenType.equals("COMENT_NFECHADO")) {//se o token for do tipo COMENT_NFECHADO
+            output = "Linha " + t.getLine() + ": comentario nao fechado";//atribui a string de saida
         }
-        else if (tokenType != null && tokenType.equals("CADEIA_NFIM")) {
-            output = "Linha " + t.getLine() + ": cadeia literal nao fechada";
+        else if (tokenType != null && tokenType.equals("CADEIA_NFIM")) {//se o token for do tipo CADEIA_NFIM
+            output = "Linha " + t.getLine() + ": cadeia literal nao fechada";//atribui a string de saida
         }
-        else if (tokenType != null && tokenType.equals("ERROR_CHAR")) {
-            output = "Linha " + t.getLine() + ": " + t.getText() + " - simbolo nao identificado";
+        else if (tokenType != null && tokenType.equals("ERROR_CHAR")) {//se o token for do tipo ERROR_CHAR
+            output = "Linha " + t.getLine() + ": " + t.getText() + " - simbolo nao identificado";//atribui a string de saida
         }
-        else if (t.getType() == Token.EOF) {
-            output = "Linha " + t.getLine() + ": erro sintatico proximo a EOF";
+        else if (t.getType() == Token.EOF) {//caso o token seja de fim de arquivo
+            output = "Linha " + t.getLine() + ": erro sintatico proximo a EOF";//atribui a string de saida
         }
-        else {
-            output = "Linha " + t.getLine() + ": erro sintatico proximo a " + t.getText();
+        else {//caso seja um erro sintatico
+            output = "Linha " + t.getLine() + ": erro sintatico proximo a " + t.getText();//atribui a string de saida
         }
-        pw.println(output);
-        pw.println("Fim da compilacao");
-        throw new ParseCancellationException(output);
+        pw.println(output);//armazena a string de saida no arquivo desejado
+        pw.println("Fim da compilacao");//informa o fim da compilação e armazena a saida no arquivo desejado
+        throw new ParseCancellationException(output);// informa o erro para finalizar a execução
         
         
     }

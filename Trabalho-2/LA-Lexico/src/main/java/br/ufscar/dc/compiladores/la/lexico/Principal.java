@@ -33,22 +33,23 @@ public class Principal {
         // args[0] é a localização e nome do arquivo de entrada
         // args[1] é a localização e nome do arquivo de saida
         try(PrintWriter pw = new PrintWriter(new File(args[1]))) {
-            CharStream cs = CharStreams.fromFileName(args[0]);
-            LALexer lex = new LALexer(cs);
+            CharStream cs = CharStreams.fromFileName(args[0]);//inicia a stream de caracteres
+            LALexer lex = new LALexer(cs);//cria a instancia do lexer
             
             
-            CommonTokenStream tokens = new CommonTokenStream(lex);
-            LAParser parser = new LAParser(tokens);
+            CommonTokenStream tokens = new CommonTokenStream(lex);//cria a stream de tokens com o lexer
+            LAParser parser = new LAParser(tokens);// cria o parser com a stream de tokens
 
-            MyErrorListener mcel = new MyErrorListener(pw);
-            parser.removeErrorListeners();
-            parser.addErrorListener(mcel);
-            parser.programa(); 
+            MyErrorListener mcel = new MyErrorListener(pw);// instancia a classe de erros MyErrorListener
+            parser.removeErrorListeners();//Remove as mensagens de erro padrão do Antlr4
+            parser.addErrorListener(mcel);//Insere a classe MyErrorListener para ser utilizado pelo Antlr
+            parser.programa(); //Realiza o parse do programa
             
             
         }catch(IOException ex){
             
         }catch(ParseCancellationException exception) {
+            //ao captar um erro, imprime no terminal o erro e encerra a execução
                 System.out.println(exception.getMessage());
         }
             
