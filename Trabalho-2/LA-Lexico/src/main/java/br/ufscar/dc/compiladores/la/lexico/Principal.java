@@ -36,19 +36,20 @@ public class Principal {
             CharStream cs = CharStreams.fromFileName(args[0]);
             LALexer lex = new LALexer(cs);
             
-            Token t = null;
-            while( (t = lex.nextToken()).getType() != Token.EOF) {
-                System.out.println("<" + LALexer.VOCABULARY.getDisplayName(t.getType()) + "," + t.getText() + ">");
-            }
+            
             CommonTokenStream tokens = new CommonTokenStream(lex);
             LAParser parser = new LAParser(tokens);
 
             MyErrorListener mcel = new MyErrorListener(pw);
+            parser.removeErrorListeners();
             parser.addErrorListener(mcel);
-
-            parser.programa();
+            parser.programa(); 
+            
+            
         }catch(IOException ex){
             
+        }catch(ParseCancellationException exception) {
+                System.out.println(exception.getMessage());
         }
             
     }

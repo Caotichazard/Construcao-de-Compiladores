@@ -68,7 +68,7 @@ WS=67
 ERROR_CHAR=68
 'algoritmo'=1
 'fim_algoritmo'=2
-'decalre'=3
+'declare'=3
 'constante'=4
 ':'=5
 '='=6

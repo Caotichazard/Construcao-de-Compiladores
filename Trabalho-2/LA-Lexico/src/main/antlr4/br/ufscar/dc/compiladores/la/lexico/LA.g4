@@ -112,7 +112,7 @@ COMENTARIO
     :   '{' ~('\n'|'\r'|'}')*  '}'?  {skip();}
     ;
 
-COMENT_NFECHADO : '{' ~('}')*;
+COMENT_NFECHADO : '{' ~('}')* '\n';
 
 WS  :   ( ' '
         | '\t'

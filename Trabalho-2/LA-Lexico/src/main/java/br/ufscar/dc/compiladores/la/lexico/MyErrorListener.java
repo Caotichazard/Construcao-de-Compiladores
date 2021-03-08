@@ -21,6 +21,7 @@ import org.antlr.v4.runtime.TokenSource;
 import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.misc.Interval;
+import org.antlr.v4.runtime.misc.ParseCancellationException;
 // Outros imports vão ser necessários aqui. O NetBeans ou IntelliJ fazem isso automaticamente
 
 public class MyErrorListener implements ANTLRErrorListener {
@@ -51,11 +52,30 @@ public class MyErrorListener implements ANTLRErrorListener {
 
         Token t = (Token) offendingSymbol;
         
-        CharStream cs = t.getInputStream() ;
-        TokenSource ts = t.getTokenSource();
-        Token nxt_token = ts.nextToken();
-        //pw.println(t.getStartIndex());
-        pw.println("Linha: "+t.getLine() +" erro sintatico proximo a "+t.getText());
+        String tokenType = LALexer.VOCABULARY.getSymbolicName(t.getType());
+        String output = "vazio";
+        
+        //System.out.println("Linha: "+t.getLine() +" erro sintatico proximo a "+t.getText());
+        
+        if (tokenType != null && tokenType.equals("COMENT_NFECHADO")) {
+            output = "Linha " + t.getLine() + ": comentario nao fechado";
+        }
+        else if (tokenType != null && tokenType.equals("CADEIA_NFIM")) {
+            output = "Linha " + t.getLine() + ": cadeia literal nao fechada";
+        }
+        else if (tokenType != null && tokenType.equals("ERROR_CHAR")) {
+            output = "Linha " + t.getLine() + ": " + t.getText() + " - simbolo nao identificado";
+        }
+        else if (t.getType() == Token.EOF) {
+            output = "Linha " + t.getLine() + ": erro sintatico proximo a EOF";
+        }
+        else {
+            output = "Linha " + t.getLine() + ": erro sintatico proximo a " + t.getText();
+        }
+        pw.println(output);
         pw.println("Fim da compilacao");
+        throw new ParseCancellationException(output);
+        
+        
     }
 }
