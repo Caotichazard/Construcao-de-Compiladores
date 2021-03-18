@@ -21,20 +21,23 @@ public class TabelaDeSimbolos {
         LOGICO,
         REGISTRO,
         PONTEIRO,
+        CUSTOMIZADO,
         INVALIDO
     }
     
-    abstract class EntradaTabelaDeSimbolos{
+    
+    public abstract class EntradaTabelaDeSimbolos{
         String nome;
         
         abstract public TipoLA getTipo();
+        abstract public List<EntradaTabelaDeSimbolos> getCampos();
     }
     
     class Variavel extends EntradaTabelaDeSimbolos{
         
         TipoLA tipo;
 
-        private Variavel(String nome, TipoLA tipo) {
+        public Variavel(String nome, TipoLA tipo) {
             super.nome = nome;
             this.tipo = tipo;
         }
@@ -42,6 +45,10 @@ public class TabelaDeSimbolos {
         public TipoLA getTipo(){
             return this.tipo;
         }
+        
+        public List<EntradaTabelaDeSimbolos> getCampos(){
+            return null;
+        };
         
     }
     
@@ -63,14 +70,18 @@ public class TabelaDeSimbolos {
             return this.tipo;
         }
         
+        public List<EntradaTabelaDeSimbolos> getCampos(){
+            return null;
+        };
+        
         
     }
     
     class Registro extends EntradaTabelaDeSimbolos{
         
-        List<Variavel> campos;
+        List<EntradaTabelaDeSimbolos> campos;
         
-        private Registro(String nome, List<Variavel> campos){
+        public Registro(String nome, List<EntradaTabelaDeSimbolos> campos){
             super.nome = nome;
             this.campos = campos;
         }
@@ -78,13 +89,23 @@ public class TabelaDeSimbolos {
         public TipoLA getTipo(){
             return TipoLA.REGISTRO;
         }
+        
+        public List<EntradaTabelaDeSimbolos> getCampos(){
+            return this.campos;
+        }
     }
     
     private final Map<String, EntradaTabelaDeSimbolos> tabela;
     
+    
     public TabelaDeSimbolos() {
         this.tabela = new HashMap<>();
+        this.tiposNovos = new HashMap<>();
     }
+    
+    private final Map<String, EntradaTabelaDeSimbolos> tiposNovos;
+    
+    
     
     public void adicionar(String nome, TipoLA tipo) {
         System.out.println("Adicionando variavel");
@@ -95,7 +116,7 @@ public class TabelaDeSimbolos {
         System.out.println("Adicionando ponteiro");
         tabela.put(nome, new Ponteiro(nome,tipo,var));
     }
-    public void adicionar(String nome, List<Variavel> campos){
+    public void adicionar(String nome, List<EntradaTabelaDeSimbolos> campos){
         System.out.println("Adicionando registro");
         tabela.put(nome, new Registro(nome,campos));
     }
@@ -108,5 +129,32 @@ public class TabelaDeSimbolos {
         System.out.println("Buscando elemento com nome = " + nome);
         System.out.println("Tipo do elemento = " + tabela.get(nome).getTipo());
         return tabela.get(nome).getTipo();
+    }
+    
+    public EntradaTabelaDeSimbolos getEntrada(String nome){
+        return tabela.get(nome);
+    }
+    
+    public void adicionaTipo(String nome, TipoLA tipo){
+        System.out.println("Adicionando variavel ao tipo");
+        tiposNovos.put(nome, new Variavel(nome, tipo));
+          
+    }
+    public void adicionaTipo(String nome, TipoLA tipo, TipoLA var){
+        System.out.println("Adicionando ponteiro ao tipo");
+        tiposNovos.put(nome, new Ponteiro(nome,tipo,var));
+    }
+    
+    public void adicionaTipo(String nome, List<EntradaTabelaDeSimbolos> campos){
+        System.out.println("Adicionando registro ao tipo");
+        tiposNovos.put(nome, new Registro(nome,campos));
+    }
+    
+    public EntradaTabelaDeSimbolos getTipoCustomizado(String nome){
+        return tiposNovos.get(nome);
+    }
+    
+    public boolean existeTipo(String nome) {
+        return tiposNovos.containsKey(nome);
     }
 }

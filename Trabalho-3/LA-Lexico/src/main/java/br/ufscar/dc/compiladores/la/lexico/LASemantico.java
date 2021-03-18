@@ -28,8 +28,12 @@ public class LASemantico extends LABaseVisitor<Void> {
         String decl = ctx.getStart().getText();
         switch (decl) {
             case ("declare"):
+                System.out.println("declare");
                 escopo = LASemanticoUtils.verificaVariavel(escopo, ctx.variavel());
                 break;
+            case("tipo"):
+                
+                escopo = LASemanticoUtils.verificaTipoNovo(escopo,ctx.tipo(), ctx.IDENT());
         }
         return super.visitDeclaracao_local(ctx);
     }
@@ -59,20 +63,46 @@ public class LASemantico extends LABaseVisitor<Void> {
 
     @Override
     public Void visitIdentificador(LAParser.IdentificadorContext ctx) {
-        for (TerminalNode value : ctx.IDENT()) {
-            Token ident = value.getSymbol();
-            System.out.println("ident=" + ident.getText());
-            boolean existeIDENT = escopo.obterEscopoAtual().existe(ident.getText());
-            if (!existeIDENT) {
-                LASemanticoUtils.adicionaErro("Linha " + ident.getLine() + ": identificador " + ident.getText() + " nao declarado");
+        int totalIdents = ctx.IDENT().size();
+        if(totalIdents > 1){
+            String identFull = "";
+            Token identAux = null;
+            int count = 0;
+            for (TerminalNode value : ctx.IDENT()) {
+                Token ident = value.getSymbol();
+                identFull += ident.getText();
+                if (count < totalIdents -1){
+                    identFull+=".";
+                }
+                if(count == 0){
+                    identAux = ident;
+                }
+                count++;
             }
+            
+            boolean existeIDENT = escopo.obterEscopoAtual().existe(identFull);
+                if (!existeIDENT) {
+                    LASemanticoUtils.adicionaErro("Linha " + identAux.getLine() + ": identificador " + identFull + " nao declarado");
+                }
+        }else{
+            if(!ctx.getParent().getParent().getText().contains("registro")){
+                for (TerminalNode value : ctx.IDENT()) {
+                Token ident = value.getSymbol();
+                System.out.println("ident=" + ident.getText());
+                boolean existeIDENT = escopo.obterEscopoAtual().existe(ident.getText());
+                if (!existeIDENT) {
+                    LASemanticoUtils.adicionaErro("Linha " + ident.getLine() + ": identificador " + ident.getText() + " nao declarado");
+                }
+            }
+            }
+            
         }
         return super.visitIdentificador(ctx);
     }
 
     @Override
     public Void visitTipo(LAParser.TipoContext ctx) {
-        TipoLA tipoVar = LASemanticoUtils.verificaTipo(ctx);
+        TipoLA tipoVar = LASemanticoUtils.verificaTipo(escopo,ctx);
         if (tipoVar == TipoLA.INVALIDO) {
             LASemanticoUtils.adicionaErro("Linha " + ctx.getStart().getLine() + ": tipo " + ctx.getStart().getText() + " nao declarado");
         }

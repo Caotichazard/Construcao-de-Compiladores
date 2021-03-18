@@ -7,6 +7,7 @@ import java.util.List;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.Pair;
 import br.ufscar.dc.compiladores.la.lexico.LASemantico;
+import br.ufscar.dc.compiladores.la.lexico.TabelaDeSimbolos.EntradaTabelaDeSimbolos;
 import br.ufscar.dc.compiladores.la.lexico.TabelaDeSimbolos.Variavel;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
@@ -17,38 +18,36 @@ public class LASemanticoUtils {
     public static void adicionaErro(String msg) {
         erros.add(msg);
     }
-    /*
-    public static Escopos verificarDeclare(Escopos escopo, LAParser.VariavelContext ctx) {
-        Token tipo = ctx.tipo().getStart();
-        // retorna uma lista contendo o <nome, tipo> da variavel
-        List<Pair<String, TipoLA>> ret = new ArrayList<>();
-        // para cada identificador da declaracao
-        for (var value : ctx.identificador()) {
-            Token ident = value.getStart();
-            List<TabelaDeSimbolos> lts = escopo.percorrerEscoposAninhados();
-            for (TabelaDeSimbolos ts : lts) {
-                if (ts.existe(ident.getText())) {
-                    // se a variavel ja existe
-                    LASemanticoUtils.adicionaErro("Linha " + ident.getLine() + ": identificador " + ident.getText() + " ja declarado anteriormente");
-                } else {
-                    ret.add(new Pair<>(ident.getText(), verificaTipo(ctx.tipo())));
-                    escopo.obterEscopoAtual().adicionar(ident.getText(), verificaTipo(ctx.tipo()));
-                }
-            }
-            System.out.println("declare=" + ident.getText() + ", " + tipo.getText());
-        } 
-        return escopo; 
-    } */
+    
     
     public static Escopos verificaVariavel(Escopos escopo, LAParser.VariavelContext ctx) {
         // retorna variáveis válidas deste escopo
         
-        TipoLA tipo = verificaTipo(ctx.tipo());
+        TipoLA tipo = verificaTipo(escopo,ctx.tipo());
         for (LAParser.IdentificadorContext id : ctx.identificador()) {
             String ident = verificaExistenciaIdentificador(escopo.obterEscopoAtual(), id.getStart());
             if (ident != null) {
+                if(tipo == TipoLA.CUSTOMIZADO){
+                    System.out.println("Adicionando variavel de tipo customizado, ident= "+ident);
+                    List<EntradaTabelaDeSimbolos> variaveis = new ArrayList<>();
+                    EntradaTabelaDeSimbolos variaveisReg = escopo.obterEscopoAtual().getTipoCustomizado(ctx.tipo().getText());
+                    for(EntradaTabelaDeSimbolos  var : variaveisReg.getCampos() ){
+                        escopo.obterEscopoAtual().adicionar(ident+"."+var.nome,var.getTipo());
+                        variaveis.add(escopo.obterEscopoAtual().getEntrada(ident+"."+var.nome));
+                    }
+                    escopo.obterEscopoAtual().adicionar(ident,variaveis);
+                }else
                 if(tipo == TipoLA.REGISTRO){
-                
+                    System.out.println("REgistro");
+                    System.out.println("ident= " + ident);
+                    System.out.println("tipo= " + tipo);
+                    List<EntradaTabelaDeSimbolos> variaveis = new ArrayList<>();
+                    LAParser.RegistroContext reg = ctx.tipo().registro();
+                    for( LAParser.VariavelContext var : reg.variavel() ){
+                        verificaVariavel(escopo,var,ident+".");
+                        variaveis.add(escopo.obterEscopoAtual().getEntrada(verificaExistenciaIdentificador(escopo.obterEscopoAtual(), var.getStart())));
+                    }
+                    escopo.obterEscopoAtual().adicionar(ident,variaveis);
                 }else
                 if(tipo == TipoLA.PONTEIRO){
                     System.out.println("PONTAS");
@@ -68,6 +67,106 @@ public class LASemanticoUtils {
         }
         return escopo;
     }
+    
+    public static Escopos verificaVariavel(Escopos escopo, LAParser.VariavelContext ctx, String regName) {
+        // retorna variáveis válidas deste escopo
+        
+        TipoLA tipo = verificaTipo(escopo,ctx.tipo());
+        for (LAParser.IdentificadorContext id : ctx.identificador()) {
+            String ident = regName + verificaExistenciaIdentificador(escopo.obterEscopoAtual(), id.getStart());
+            if (ident != null) {
+                if(tipo == TipoLA.CUSTOMIZADO){
+                    List<EntradaTabelaDeSimbolos> variaveis = new ArrayList<>();
+                    LAParser.RegistroContext reg = ctx.tipo().registro();
+                    for( LAParser.VariavelContext var : reg.variavel() ){
+                        
+                        verificaVariavel(escopo,var,ident+".");
+                        
+                        variaveis.add(escopo.obterEscopoAtual().getEntrada(verificaExistenciaIdentificador(escopo.obterEscopoAtual(), var.getStart())));
+                    }
+                    escopo.obterEscopoAtual().adicionar(ident,variaveis);
+                }else
+                if(tipo == TipoLA.REGISTRO){
+                    System.out.println("REgistro");
+                    System.out.println("ident= " + ident);
+                    System.out.println("tipo= " + tipo);
+                    List<EntradaTabelaDeSimbolos> variaveis = new ArrayList<>();
+                    LAParser.RegistroContext reg = ctx.tipo().registro();
+                    for( LAParser.VariavelContext var : reg.variavel() ){
+                        
+                        verificaVariavel(escopo,var,ident+".");
+                        
+                        variaveis.add(escopo.obterEscopoAtual().getEntrada(verificaExistenciaIdentificador(escopo.obterEscopoAtual(), var.getStart())));
+                    }
+                    escopo.obterEscopoAtual().adicionar(ident,variaveis);
+                }else
+                if(tipo == TipoLA.PONTEIRO){
+                    System.out.println("PONTAS");
+                    System.out.println("ident= " + ident);
+                    System.out.println("tipo= " + tipo);
+                    System.out.println("tipo= " + verificaTipo(ctx.tipo().getText().replace("^","")));
+                    System.out.println("-----------------");
+                    
+                    escopo.obterEscopoAtual().adicionar(ident,TipoLA.PONTEIRO,verificaTipo(ctx.tipo().getText().replace("^","")));
+                }else{
+                    System.out.println("ident= " + ident);
+                    System.out.println("tipo= " + tipo);
+                    System.out.println("-----------------");
+                    escopo.obterEscopoAtual().adicionar(ident, tipo);
+                }
+            }
+        }
+        return escopo;
+    }
+    
+    public static Escopos verificaVariavel(Escopos escopo, LAParser.TipoContext ctx, TerminalNode identName) {
+        // retorna variáveis válidas deste escopo
+        
+        TipoLA tipo = verificaTipo(escopo,ctx);
+        
+            String ident = verificaExistenciaIdentificador(escopo.obterEscopoAtual(), identName.getSymbol());
+            if (ident != null) {
+                if(tipo == TipoLA.CUSTOMIZADO){
+                    List<EntradaTabelaDeSimbolos> variaveis = new ArrayList<>();
+                    LAParser.RegistroContext reg = ctx.registro();
+                    for( LAParser.VariavelContext var : reg.variavel() ){
+                        verificaVariavel(escopo,var,ident+".");
+                        variaveis.add(escopo.obterEscopoAtual().getEntrada(verificaExistenciaIdentificador(escopo.obterEscopoAtual(), var.getStart())));
+                    }
+                    escopo.obterEscopoAtual().adicionar(ident,variaveis);
+                }else
+                if(tipo == TipoLA.REGISTRO){
+                    System.out.println("REgistro");
+                    System.out.println("ident= " + ident);
+                    System.out.println("tipo= " + tipo);
+                    List<EntradaTabelaDeSimbolos> variaveis = new ArrayList<>();
+                    LAParser.RegistroContext reg = ctx.registro();
+                    for( LAParser.VariavelContext var : reg.variavel() ){
+                        verificaVariavel(escopo,var,ident+".");
+                        variaveis.add(escopo.obterEscopoAtual().getEntrada(verificaExistenciaIdentificador(escopo.obterEscopoAtual(), var.getStart())));
+                    }
+                    escopo.obterEscopoAtual().adicionar(ident,variaveis);
+                }else
+                if(tipo == TipoLA.PONTEIRO){
+                    System.out.println("PONTAS");
+                    System.out.println("ident= " + ident);
+                    System.out.println("tipo= " + tipo);
+                    System.out.println("tipo= " + verificaTipo(ctx.getText().replace("^","")));
+                    System.out.println("-----------------");
+                    
+                    escopo.obterEscopoAtual().adicionar(ident,TipoLA.PONTEIRO,verificaTipo(ctx.getText().replace("^","")));
+                }else{
+                    System.out.println("ident= " + ident);
+                    System.out.println("tipo= " + tipo);
+                    System.out.println("-----------------");
+                    escopo.obterEscopoAtual().adicionar(ident, tipo);
+                }
+            }
+        
+        return escopo;
+    }
+    
+    
     
     
     public static Escopos verificaCmdAtribuicao(Escopos escopo, LAParser.Cmd_atribuicaoContext ctx) {
@@ -256,6 +355,7 @@ public class LASemanticoUtils {
 
     public static String verificaExistenciaIdentificador(TabelaDeSimbolos ts, Token ident) {
         if (ts.existe(ident.getText())) { 
+            System.out.println("Linha " + ident.getLine() + ": identificador " + ident.getText() + " ja declarado anteriormente");
             LASemanticoUtils.adicionaErro("Linha " + ident.getLine() + ": identificador " + ident.getText() + " ja declarado anteriormente");
             return null;
         } 
@@ -302,7 +402,7 @@ public class LASemanticoUtils {
     
     
     
-    public static TipoLA verificaTipo(LAParser.TipoContext ctx) {
+    public static TipoLA verificaTipo(Escopos escopo, LAParser.TipoContext ctx) {
         TipoLA tipoVar = TipoLA.INVALIDO;
         if(ctx.registro()!=null){
             tipoVar = TipoLA.REGISTRO;
@@ -326,6 +426,12 @@ public class LASemanticoUtils {
                         break;
                     case "logico":
                         tipoVar = TipoLA.LOGICO;
+                        break;
+                    default:
+                        if(escopo.obterEscopoAtual().existeTipo(tipo.getText())){
+                            tipoVar = TipoLA.CUSTOMIZADO;
+                        }
+                        
                         break;
 
                 }  
@@ -353,5 +459,32 @@ public class LASemanticoUtils {
                         break;
         }
         return tipoVar;
+    }
+    
+    public static Escopos verificaTipoNovo(Escopos escopo,LAParser.TipoContext ctx, TerminalNode ident){
+        TipoLA tipo = verificaTipo(escopo,ctx);
+        
+        if(tipo == TipoLA.REGISTRO){
+            
+            List<EntradaTabelaDeSimbolos> variaveis = new ArrayList<>();
+            LAParser.RegistroContext reg = ctx.registro();
+            for( LAParser.VariavelContext var : reg.variavel() ){
+                for(LAParser.IdentificadorContext id: var.identificador()){
+                    System.out.println(var.identificador());
+                    System.out.println(var.tipo().getText());
+                    escopo.obterEscopoAtual().adicionaTipo(id.getText(), verificaTipo(escopo,var.tipo()));
+                    variaveis.add(escopo.obterEscopoAtual().getTipoCustomizado(id.getText()));
+                }
+                
+            }
+            escopo.obterEscopoAtual().adicionaTipo(ident.getText(),variaveis);
+            
+            escopo.obterEscopoAtual().adicionar(ident.getText(), TipoLA.CUSTOMIZADO);
+            
+            
+            
+        }
+        
+        return escopo;
     }
 }
