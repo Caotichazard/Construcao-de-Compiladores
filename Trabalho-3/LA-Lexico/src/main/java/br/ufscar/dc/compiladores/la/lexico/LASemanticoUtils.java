@@ -19,472 +19,428 @@ public class LASemanticoUtils {
         erros.add(msg);
     }
     
-    
-    public static Escopos verificaVariavel(Escopos escopo, LAParser.VariavelContext ctx) {
-        // retorna variáveis válidas deste escopo
+    public static Escopos visitaDeclGlobal(Escopos escopo, LAParser.Declaracao_globalContext ctx){
         
-        TipoLA tipo = verificaTipo(escopo,ctx.tipo());
-        for (LAParser.IdentificadorContext id : ctx.identificador()) {
-            String ident = verificaExistenciaIdentificador(escopo.obterEscopoAtual(), id.getStart());
-            if (ident != null) {
-                if(tipo == TipoLA.CUSTOMIZADO){
-                    System.out.println("Adicionando variavel de tipo customizado, ident= "+ident);
-                    List<EntradaTabelaDeSimbolos> variaveis = new ArrayList<>();
-                    EntradaTabelaDeSimbolos variaveisReg = escopo.obterEscopoAtual().getTipoCustomizado(ctx.tipo().getText());
-                    for(EntradaTabelaDeSimbolos  var : variaveisReg.getCampos() ){
-                        escopo.obterEscopoAtual().adicionar(ident+"."+var.nome,var.getTipo());
-                        variaveis.add(escopo.obterEscopoAtual().getEntrada(ident+"."+var.nome));
-                    }
-                    escopo.obterEscopoAtual().adicionar(ident,variaveis);
-                }else
-                if(tipo == TipoLA.REGISTRO){
-                    System.out.println("REgistro");
-                    System.out.println("ident= " + ident);
-                    System.out.println("tipo= " + tipo);
-                    List<EntradaTabelaDeSimbolos> variaveis = new ArrayList<>();
-                    LAParser.RegistroContext reg = ctx.tipo().registro();
-                    for( LAParser.VariavelContext var : reg.variavel() ){
-                        verificaVariavel(escopo,var,ident+".");
-                        variaveis.add(escopo.obterEscopoAtual().getEntrada(verificaExistenciaIdentificador(escopo.obterEscopoAtual(), var.getStart())));
-                    }
-                    escopo.obterEscopoAtual().adicionar(ident,variaveis);
-                }else
-                if(tipo == TipoLA.PONTEIRO){
-                    System.out.println("PONTAS");
-                    System.out.println("ident= " + ident);
-                    System.out.println("tipo= " + tipo);
-                    System.out.println("tipo= " + verificaTipo(ctx.tipo().getText().replace("^","")));
-                    System.out.println("-----------------");
+        
+        return escopo;
+    }
+    
+    public static Escopos visitaDeclLocal(Escopos escopo, LAParser.Declaracao_localContext ctx){
+        String inicio = ctx.getStart().getText();
+        
+        switch(inicio){
+            case("declare"):
+                System.out.println(inicio);
+                escopo = visitaVariavel(escopo, ctx.variavel());
+                break;
+        }
+                
                     
-                    escopo.obterEscopoAtual().adicionar(ident,TipoLA.PONTEIRO,verificaTipo(ctx.tipo().getText().replace("^","")));
-                }else{
-                    System.out.println("ident= " + ident);
-                    System.out.println("tipo= " + tipo);
-                    System.out.println("-----------------");
-                    escopo.obterEscopoAtual().adicionar(ident, tipo);
-                }
-            }
-        }
         return escopo;
     }
     
-    public static Escopos verificaVariavel(Escopos escopo, LAParser.VariavelContext ctx, String regName) {
-        // retorna variáveis válidas deste escopo
-        
-        TipoLA tipo = verificaTipo(escopo,ctx.tipo());
-        for (LAParser.IdentificadorContext id : ctx.identificador()) {
-            String ident = regName + verificaExistenciaIdentificador(escopo.obterEscopoAtual(), id.getStart());
-            if (ident != null) {
-                if(tipo == TipoLA.CUSTOMIZADO){
-                    List<EntradaTabelaDeSimbolos> variaveis = new ArrayList<>();
-                    LAParser.RegistroContext reg = ctx.tipo().registro();
-                    for( LAParser.VariavelContext var : reg.variavel() ){
-                        
-                        verificaVariavel(escopo,var,ident+".");
-                        
-                        variaveis.add(escopo.obterEscopoAtual().getEntrada(verificaExistenciaIdentificador(escopo.obterEscopoAtual(), var.getStart())));
-                    }
-                    escopo.obterEscopoAtual().adicionar(ident,variaveis);
-                }else
-                if(tipo == TipoLA.REGISTRO){
-                    System.out.println("REgistro");
-                    System.out.println("ident= " + ident);
-                    System.out.println("tipo= " + tipo);
-                    List<EntradaTabelaDeSimbolos> variaveis = new ArrayList<>();
-                    LAParser.RegistroContext reg = ctx.tipo().registro();
-                    for( LAParser.VariavelContext var : reg.variavel() ){
-                        
-                        verificaVariavel(escopo,var,ident+".");
-                        
-                        variaveis.add(escopo.obterEscopoAtual().getEntrada(verificaExistenciaIdentificador(escopo.obterEscopoAtual(), var.getStart())));
-                    }
-                    escopo.obterEscopoAtual().adicionar(ident,variaveis);
-                }else
-                if(tipo == TipoLA.PONTEIRO){
-                    System.out.println("PONTAS");
-                    System.out.println("ident= " + ident);
-                    System.out.println("tipo= " + tipo);
-                    System.out.println("tipo= " + verificaTipo(ctx.tipo().getText().replace("^","")));
-                    System.out.println("-----------------");
-                    
-                    escopo.obterEscopoAtual().adicionar(ident,TipoLA.PONTEIRO,verificaTipo(ctx.tipo().getText().replace("^","")));
-                }else{
-                    System.out.println("ident= " + ident);
-                    System.out.println("tipo= " + tipo);
-                    System.out.println("-----------------");
-                    escopo.obterEscopoAtual().adicionar(ident, tipo);
-                }
-            }
+    public static Escopos visitaCmd(Escopos escopo, LAParser.CmdContext ctx){
+        System.out.println("vistando comando");
+        if(ctx.cmd_leia()!=null){
+            System.out.println("leia");
+            verificaCmdLeia(escopo,ctx.cmd_leia());
+            
         }
-        return escopo;
-    }
-    
-    public static Escopos verificaVariavel(Escopos escopo, LAParser.TipoContext ctx, TerminalNode identName) {
-        // retorna variáveis válidas deste escopo
-        
-        TipoLA tipo = verificaTipo(escopo,ctx);
-        
-            String ident = verificaExistenciaIdentificador(escopo.obterEscopoAtual(), identName.getSymbol());
-            if (ident != null) {
-                if(tipo == TipoLA.CUSTOMIZADO){
-                    List<EntradaTabelaDeSimbolos> variaveis = new ArrayList<>();
-                    LAParser.RegistroContext reg = ctx.registro();
-                    for( LAParser.VariavelContext var : reg.variavel() ){
-                        verificaVariavel(escopo,var,ident+".");
-                        variaveis.add(escopo.obterEscopoAtual().getEntrada(verificaExistenciaIdentificador(escopo.obterEscopoAtual(), var.getStart())));
-                    }
-                    escopo.obterEscopoAtual().adicionar(ident,variaveis);
-                }else
-                if(tipo == TipoLA.REGISTRO){
-                    System.out.println("REgistro");
-                    System.out.println("ident= " + ident);
-                    System.out.println("tipo= " + tipo);
-                    List<EntradaTabelaDeSimbolos> variaveis = new ArrayList<>();
-                    LAParser.RegistroContext reg = ctx.registro();
-                    for( LAParser.VariavelContext var : reg.variavel() ){
-                        verificaVariavel(escopo,var,ident+".");
-                        variaveis.add(escopo.obterEscopoAtual().getEntrada(verificaExistenciaIdentificador(escopo.obterEscopoAtual(), var.getStart())));
-                    }
-                    escopo.obterEscopoAtual().adicionar(ident,variaveis);
-                }else
-                if(tipo == TipoLA.PONTEIRO){
-                    System.out.println("PONTAS");
-                    System.out.println("ident= " + ident);
-                    System.out.println("tipo= " + tipo);
-                    System.out.println("tipo= " + verificaTipo(ctx.getText().replace("^","")));
-                    System.out.println("-----------------");
-                    
-                    escopo.obterEscopoAtual().adicionar(ident,TipoLA.PONTEIRO,verificaTipo(ctx.getText().replace("^","")));
-                }else{
-                    System.out.println("ident= " + ident);
-                    System.out.println("tipo= " + tipo);
-                    System.out.println("-----------------");
-                    escopo.obterEscopoAtual().adicionar(ident, tipo);
-                }
-            }
+        if(ctx.cmd_escreva()!=null){
+            System.out.println("escreva");
+            verificaCmdEscreva(escopo,ctx.cmd_escreva());
+        }
+        if(ctx.cmd_atribuicao()!=null){
+            System.out.println("atribuicao");
+            verificaCmdAtribuicao(escopo,ctx.cmd_atribuicao());
+        }
+        if(ctx.cmd_caso()!=null){
+            
+        }
+        if(ctx.cmd_chamada()!=null){
+            
+        }
+        if(ctx.cmd_enquanto()!=null){
+            System.out.println("enquanto");
+            verificaCmdEnquanto(escopo,ctx.cmd_enquanto());
+        }
+        if(ctx.cmd_faca()!=null){
+            
+        }
+        if(ctx.cmd_para()!=null){
+            
+        }
+        if(ctx.cmd_retorne()!=null){
+            
+        }
+        if(ctx.cmd_se()!=null){
+            System.out.println("se");
+            verificaCmdSe(escopo,ctx.cmd_se());
+        }
         
         return escopo;
     }
     
-    
-    
-    
-    public static Escopos verificaCmdAtribuicao(Escopos escopo, LAParser.Cmd_atribuicaoContext ctx) {
-        Token tokenLHS = ctx.identificador().getStart(); // token do lado esquerdo
-        TipoLA tipoLHS = escopo.obterEscopoAtual().verificar(tokenLHS.getText()); // expressão do lado direito
-        System.out.println("tipoLHS=" + tokenLHS.getText());
-        TipoLA tipoRHS = verificaExpressao(escopo,ctx.expressao());
-        return escopo;
+    public static void verificaCmdEnquanto(Escopos escopo, LAParser.Cmd_enquantoContext ctx){
+        TipoLA expTipo = visitaExpressao(escopo,ctx.expressao());
+        for(LAParser.CmdContext cmd: ctx.cmd()){
+            visitaCmd(escopo,cmd);
+        }
     }
-
     
-    public static TipoLA verificaExpressao(Escopos escopo, LAParser.ExpressaoContext ctx) {
-        List<TipoLA> tipoTermoLogico = new ArrayList<>();
-        boolean hasDiff = false;
-        for (LAParser.Termo_logicoContext termoLogico : ctx.termo_logico()) {
-            tipoTermoLogico.add(verificaTermoLogico(escopo,termoLogico));
+    public static void verificaCmdSe(Escopos escopo, LAParser.Cmd_seContext ctx){
+        TipoLA expTipo = visitaExpressao(escopo,ctx.expressao());
+        for(LAParser.CmdContext cmd: ctx.cmd()){
+            visitaCmd(escopo,cmd);
+        }
+    }
+    
+    public static void verificaCmdAtribuicao(Escopos escopo, LAParser.Cmd_atribuicaoContext ctx){
+        TipoLA tipoIdent = visitaIdentificador(escopo,ctx.identificador()) ;
+        TipoLA tipoExp = visitaExpressao(escopo,ctx.expressao());
+        System.out.print(tipoIdent);
+        System.out.print("  ");
+        System.out.println(tipoExp);
+        System.out.println(verificaTiposCompativeis(tipoIdent,tipoExp));
+        if(!verificaTiposCompativeis(tipoIdent,tipoExp)){
+            adicionaErro("Linha "+ctx.identificador().getStart().getLine()+": atribuicao nao compativel para " + ctx.identificador().getText());
+        }
+    }
+    public static void verificaCmdLeia(Escopos escopo, LAParser.Cmd_leiaContext ctx){
+        for(LAParser.IdentificadorContext ident: ctx.identificador()){
+            String nome = ident.getText();
+            if(!escopo.obterEscopoAtual().existe(nome)){
+                adicionaErro("Linha "+ident.getStart().getLine()+": identificador "+nome+" nao declarado");
+            }
+        }
+    }
+    
+    public static void verificaCmdEscreva(Escopos escopo, LAParser.Cmd_escrevaContext ctx){
+        for(LAParser.ExpressaoContext exp: ctx.expressao()){
+            visitaExpressao(escopo,exp);
+        }
+    }
+    
+    public static TipoLA visitaExpressao(Escopos escopo, LAParser.ExpressaoContext ctx){
+        TipoLA tipoRetorno = TipoLA.INVALIDO;
+        
+        int qtdTermos = ctx.termo_logico().size();
+        List<TipoLA> tiposTermos = new ArrayList<>();
+        for(LAParser.Termo_logicoContext termoLogico:ctx.termo_logico()){
+            tiposTermos.add(visitaTermoLogico(escopo,termoLogico));
         }
         
-        if(ctx.op_logico_1() != null){
-            System.out.println("Tem logica");
-            if (!tipoTermoLogico.contains(TipoLA.INVALIDO)){
-                return tipoTermoLogico.get(0);
+        
+        if(qtdTermos>1){
+            if(verificaTiposCompativeis(tiposTermos)){
+                tipoRetorno = TipoLA.LOGICO;
+            }
+            
+        }else{
+            tipoRetorno = tiposTermos.get(0);
+        }
+        return tipoRetorno;
+    }
+    public static TipoLA visitaTermoLogico(Escopos escopo, LAParser.Termo_logicoContext ctx){
+        TipoLA tipoRetorno = TipoLA.INVALIDO;
+        
+        int qtdTermos = ctx.fator_logico().size();
+        List<TipoLA> tiposTermos = new ArrayList<>();
+        for(LAParser.Fator_logicoContext fatorLogico:ctx.fator_logico()){
+            tiposTermos.add(visitaFatorLogico(escopo,fatorLogico));
+        }
+        if(qtdTermos>1){
+            if(verificaTiposCompativeis(tiposTermos)){
+                tipoRetorno = TipoLA.LOGICO;
             }
         }else{
-            System.out.println("N tem logica");
-            if (tiposCompativeis(tipoTermoLogico)){
-                return tipoTermoLogico.get(0);
-            }
+            tipoRetorno = tiposTermos.get(0);
         }
-        return TipoLA.INVALIDO;
+        return tipoRetorno;
     }
     
-    public static TipoLA verificaTermoLogico(Escopos escopo, LAParser.Termo_logicoContext ctx) {
-        List<TipoLA> tipoFatorLogico = new ArrayList<>();
-        for (LAParser.Fator_logicoContext fatorLogico : ctx.fator_logico()) {
-            tipoFatorLogico.add(verificaFatorLogico(escopo,fatorLogico));
-        }
-        if(ctx.op_logico_2() != null){
-            System.out.println("Tem logica");
-            if (!tipoFatorLogico.contains(TipoLA.INVALIDO)){
-                return tipoFatorLogico.get(0);
+    public static TipoLA visitaFatorLogico(Escopos escopo, LAParser.Fator_logicoContext ctx){
+        TipoLA tipoRetorno = TipoLA.INVALIDO;
+        TipoLA tipoParcela = visitaParcelaLogica(escopo,ctx.parcela_logica());
+        if(ctx.getStart().equals("não")){
+            if(tipoParcela == TipoLA.LOGICO){
+                tipoRetorno = TipoLA.LOGICO;
             }
         }else{
-            System.out.println("N tem logica");
-            if (tiposCompativeis(tipoFatorLogico)){
-                return tipoFatorLogico.get(0);
-            }
+            tipoRetorno = tipoParcela;
         }
         
-        return TipoLA.INVALIDO;
-        
+        return tipoRetorno;
     }
     
-    public static TipoLA verificaFatorLogico(Escopos escopo, LAParser.Fator_logicoContext ctx) {
-        return verificaParcelaLogica(escopo,ctx.parcela_logica());
-    }
-    
-    public static TipoLA verificaParcelaLogica(Escopos escopo, LAParser.Parcela_logicaContext ctx) {
-        if (ctx.exp_relacional() != null) {
-            
-            return verificarExpressaoRelacional(escopo,ctx.exp_relacional());
-        }
-        if(ctx.TIPO_LOGICO != null){
-            return TipoLA.LOGICO;
-        }
-        return TipoLA.INVALIDO;
-    }
-    
-    public static TipoLA verificarExpressaoRelacional(Escopos escopo, LAParser.Exp_relacionalContext ctx){
-        List<TipoLA> tipoExpRelacional = new ArrayList<>();
-        for (LAParser.Exp_aritmeticaContext exp_aritmetica : ctx.exp_aritmetica() ) {
-            tipoExpRelacional.add(verificarExpressaoAritmetica(escopo,exp_aritmetica));
+    public static TipoLA visitaParcelaLogica(Escopos escopo, LAParser.Parcela_logicaContext ctx){
+        TipoLA tipoRetorno = TipoLA.INVALIDO;
+        if(ctx.exp_relacional()!=null){
+            tipoRetorno = visitaExpRelacional(escopo,ctx.exp_relacional());
+        }else{
+            tipoRetorno = TipoLA.LOGICO;
         }
         
-        if(ctx.op_relacional() != null){
-            if (tiposCompativeis(tipoExpRelacional)){
-                return TipoLA.LOGICO;
+        return tipoRetorno;
+    }
+    
+    public static TipoLA visitaExpRelacional(Escopos escopo, LAParser.Exp_relacionalContext ctx){
+        TipoLA tipoRetorno = TipoLA.INVALIDO;
+        
+        int qtdTermos = ctx.exp_aritmetica().size();
+        List<TipoLA> tiposExps = new ArrayList<>();
+        for(LAParser.Exp_aritmeticaContext expArit:ctx.exp_aritmetica()){
+            tiposExps.add(visitaExpAritmetica(escopo,expArit));
+        }
+        if(qtdTermos>1){
+            if(verificaTiposCompativeis(tiposExps)){
+                tipoRetorno = TipoLA.LOGICO;
             }
         }else{
-            
-            return tipoExpRelacional.get(0);
-            
+            tipoRetorno = tiposExps.get(0);
         }
-        
-        
-        return TipoLA.INVALIDO;
-        
+        return tipoRetorno;
     }
     
-    public static TipoLA verificarExpressaoAritmetica(Escopos escopo, LAParser.Exp_aritmeticaContext ctx ){
+    public static TipoLA visitaExpAritmetica(Escopos escopo, LAParser.Exp_aritmeticaContext ctx){
+        TipoLA tipoRetorno = TipoLA.INVALIDO;
         
-        List<TipoLA> tipoTermoAritmetica = new ArrayList<>();
-        for (LAParser.TermoContext termoAritmetico : ctx.termo() ) {
-            tipoTermoAritmetica.add(verificaTermoAritmetica(escopo,termoAritmetico));
+        int qtdTermos = ctx.termo().size();
+        List<TipoLA> tiposExps = new ArrayList<>();
+        for(LAParser.TermoContext expArit:ctx.termo()){
+            tiposExps.add(visitaTermoAritmetico(escopo,expArit));
         }
-        if (tiposCompativeis(tipoTermoAritmetica)){
-                return tipoTermoAritmetica.get(0);
-        }
-        return TipoLA.INVALIDO;
-    }
-    
-    public static TipoLA verificaTermoAritmetica(Escopos escopo, LAParser.TermoContext ctx) {
-        
-        List<TipoLA> tipoFatorAritmetica = new ArrayList<>();
-        for (LAParser.FatorContext fatorAritmetico : ctx.fator()) {
-            tipoFatorAritmetica.add(verificaFatorAritmetica(escopo,fatorAritmetico));
-        }
-        if (tiposCompativeis(tipoFatorAritmetica)){
-                return tipoFatorAritmetica.get(0);
-        }
-        return TipoLA.INVALIDO;
-    }
-    
-    public static TipoLA verificaFatorAritmetica(Escopos escopo, LAParser.FatorContext ctx) {
-        
-        List<TipoLA> tipoParcelaAritmetica = new ArrayList<>();
-        for (LAParser.ParcelaContext parcelaAritmetico : ctx.parcela()) {
-            tipoParcelaAritmetica.add(verificaParcelaAritmetica(escopo,parcelaAritmetico));
-        }
-        if (tiposCompativeis(tipoParcelaAritmetica)){
-                return tipoParcelaAritmetica.get(0);
-        }
-        return TipoLA.INVALIDO;
-    }
-    
-    public static TipoLA verificaParcelaAritmetica(Escopos escopo, LAParser.ParcelaContext ctx) {
-        
-        if(ctx.parcela_unario() != null){
-            return verificarParcelaUnario(escopo,ctx.parcela_unario());
-        }
-        if(ctx.parcela_nao_unario() != null){
-            return verificarParcelaNaoUnario(escopo,ctx.parcela_nao_unario());
-        }
-        return TipoLA.INVALIDO;
-    }
-    
-    public static TipoLA verificarParcelaUnario(Escopos escopo, LAParser.Parcela_unarioContext ctx){
-        
-        if( ctx.NUM_INT() != null){
-            
-            return TipoLA.INTEIRO;
-        }
-        if( ctx.NUM_REAL() != null){
-            
-            return TipoLA.REAL;
-        }
-        if( ctx.identificador() != null){
-            
-            return verificarTipoIdentificador(escopo,ctx.identificador());
-        }
-        if( ctx.IDENT() != null){
-           
-            List<TipoLA> tipoExpressao = new ArrayList<>();
-            for (LAParser.ExpressaoContext express : ctx.expressao()) {
-                tipoExpressao.add(verificaExpressao(escopo,express));
+        if(qtdTermos>1){
+            if(verificaTiposCompativeis(tiposExps)){
+                tipoRetorno = tiposExps.get(0);
             }
-            if (tiposCompativeis(tipoExpressao)){
-                return tipoExpressao.get(0);
-            }
-            
-        }else if (ctx.expressao() != null){
-            
-            List<TipoLA> tipoExpressao = new ArrayList<>();
-            for (LAParser.ExpressaoContext express : ctx.expressao()) {
-                tipoExpressao.add(verificaExpressao(escopo,express));
-            }
-            
-            
-            if (tiposCompativeis(tipoExpressao)){
-                return tipoExpressao.get(0);
-            }
-        }
-        
-        return TipoLA.INVALIDO;
-    }
-    public static TipoLA verificarParcelaNaoUnario(Escopos escopo, LAParser.Parcela_nao_unarioContext ctx){
-        
-        if( ctx.CADEIA() != null){
-            return TipoLA.CADEIA;
-        }
-        if ( ctx.identificador() != null){
-            return verificarTipoIdentificador(escopo,ctx.identificador() );
-        }
-        return TipoLA.INVALIDO;
-    }
-
-    public static String verificaExistenciaIdentificador(TabelaDeSimbolos ts, Token ident) {
-        if (ts.existe(ident.getText())) { 
-            System.out.println("Linha " + ident.getLine() + ": identificador " + ident.getText() + " ja declarado anteriormente");
-            LASemanticoUtils.adicionaErro("Linha " + ident.getLine() + ": identificador " + ident.getText() + " ja declarado anteriormente");
-            return null;
-        } 
-        return ident.getText();
-    }
-    
-    public static boolean tiposCompativeis(List<TipoLA> listaTipos){
-        boolean isCompatible = true;
-        
-        
-        if(listaTipos.contains(TipoLA.CADEIA) && (listaTipos.contains(TipoLA.REAL) || listaTipos.contains(TipoLA.INTEIRO) || listaTipos.contains(TipoLA.LOGICO))){
-            isCompatible = false;
-        }
-        if(listaTipos.contains(TipoLA.LOGICO) && (listaTipos.contains(TipoLA.REAL) || listaTipos.contains(TipoLA.INTEIRO) || listaTipos.contains(TipoLA.CADEIA))){
-            isCompatible = false;
-        }
-        if(listaTipos.contains(TipoLA.INVALIDO )){
-            isCompatible = false;
-        }
-        
-        return isCompatible;
-    }
-    
-    public static TipoLA verificarTipoIdentificador(Escopos escopo, LAParser.IdentificadorContext ctx){
-        TabelaDeSimbolos ts = escopo.obterEscopoAtual();
-        List<TipoLA> listaTipos = new ArrayList<>();
-        for(TerminalNode ident: ctx.IDENT()){
-            if(ts.existe(ident.toString())){
-                listaTipos.add(ts.verificar(ident.toString()));
-            }
-        }
-        
-        boolean hasDiff = false;
-        for (TipoLA tipo: listaTipos){
-            if(tipo != listaTipos.get(0)){
-                hasDiff = true;
-            }
-        }
-        if (!hasDiff){
-            return listaTipos.get(0);
-        }
-        return TipoLA.INVALIDO;
-    }
-    
-    
-    
-    public static TipoLA verificaTipo(Escopos escopo, LAParser.TipoContext ctx) {
-        TipoLA tipoVar = TipoLA.INVALIDO;
-        if(ctx.registro()!=null){
-            tipoVar = TipoLA.REGISTRO;
         }else{
-            LAParser.Tipo_estendidoContext tipoEstendido = ctx.tipo_estendido();
-            if("^".equals(tipoEstendido.getStart().getText())){
-                tipoVar = TipoLA.PONTEIRO;
+            tipoRetorno = tiposExps.get(0);
+        }
+        return tipoRetorno;
+    }
+    public static TipoLA visitaTermoAritmetico(Escopos escopo, LAParser.TermoContext ctx){
+        TipoLA tipoRetorno = TipoLA.INVALIDO;
+        
+        int qtdTermos = ctx.fator().size();
+        List<TipoLA> tiposExps = new ArrayList<>();
+        for(LAParser.FatorContext expArit:ctx.fator()){
+            tiposExps.add(visitaFatorAritmetico(escopo,expArit));
+        }
+        if(qtdTermos>1){
+            if(verificaTiposCompativeis(tiposExps)){
+                tipoRetorno = tiposExps.get(0);
+            }
+        }else{
+            tipoRetorno = tiposExps.get(0);
+        }
+        return tipoRetorno;
+    }
+    public static TipoLA visitaFatorAritmetico(Escopos escopo, LAParser.FatorContext ctx){
+        TipoLA tipoRetorno = TipoLA.INVALIDO;
+        
+        int qtdTermos = ctx.parcela().size();
+        List<TipoLA> tiposExps = new ArrayList<>();
+        for(LAParser.ParcelaContext expArit:ctx.parcela()){
+            tiposExps.add(visitaParcelaAritmetica(escopo,expArit));
+        }
+        if(qtdTermos>1){
+            if(verificaTiposCompativeis(tiposExps)){
+                tipoRetorno = tiposExps.get(0);
+            }
+        }else{
+            tipoRetorno = tiposExps.get(0);
+        }
+        return tipoRetorno;
+    }
+    
+    public static TipoLA visitaParcelaAritmetica(Escopos escopo, LAParser.ParcelaContext ctx){
+        TipoLA tipoRetorno = TipoLA.INVALIDO;
+        if(ctx.parcela_nao_unario()!= null){
+            tipoRetorno = visitaParcelaNaoUnaria(escopo,ctx.parcela_nao_unario());
+        }else{
+            tipoRetorno = visitaParcelaUnaria(escopo,ctx.parcela_unario());
+        }
+        
+        return tipoRetorno;
+    }
+    
+    public static TipoLA visitaParcelaUnaria(Escopos escopo, LAParser.Parcela_unarioContext ctx){
+        TipoLA tipoRetorno = TipoLA.INVALIDO;
+        if(ctx.NUM_INT()!=null){
+            tipoRetorno = TipoLA.INTEIRO;
+        }
+        if(ctx.NUM_REAL()!=null){
+            tipoRetorno = TipoLA.REAL;
+        }
+        if(ctx.identificador()!=null){
+            
+            if(escopo.obterEscopoAtual().existe(ctx.identificador().getText())){
+                tipoRetorno = escopo.obterEscopoAtual().verificar(ctx.identificador().getText());
             }else{
-                Token tipo = ctx.getStart();
-                //System.out.println("tipo=" + tipo.getText());
-        
-                switch (tipo.getText()) {
-                    case "inteiro":
-                        tipoVar = TipoLA.INTEIRO;
-                        break;
-                    case "real":
-                        tipoVar = TipoLA.REAL;
-                        break;
-                    case "literal":
-                        tipoVar = TipoLA.CADEIA;
-                        break;
-                    case "logico":
-                        tipoVar = TipoLA.LOGICO;
-                        break;
-                    default:
-                        if(escopo.obterEscopoAtual().existeTipo(tipo.getText())){
-                            tipoVar = TipoLA.CUSTOMIZADO;
-                        }
-                        
-                        break;
-
-                }  
+                adicionaErro("Linha "+ctx.identificador().getStart().getLine()+": identificador "+ctx.identificador().getText()+" nao declarado");
             }
         }
-        
-        
-        return tipoVar;
-    }
-    
-    public static TipoLA verificaTipo(String tipoStr){
-        TipoLA tipoVar = TipoLA.INVALIDO;
-        switch (tipoStr) {
-                    case "inteiro":
-                        tipoVar = TipoLA.INTEIRO;
-                        break;
-                    case "real":
-                        tipoVar = TipoLA.REAL;
-                        break;
-                    case "literal":
-                        tipoVar = TipoLA.CADEIA;
-                        break;
-                    case "logico":
-                        tipoVar = TipoLA.LOGICO;
-                        break;
+        if(ctx.IDENT()!=null){
+            System.out.println("numsei oq to fazendo");
+        }else{
+            for(LAParser.ExpressaoContext exp: ctx.expressao()){
+                tipoRetorno = visitaExpressao(escopo,exp);
+            }
         }
-        return tipoVar;
+        return tipoRetorno;
     }
     
-    public static Escopos verificaTipoNovo(Escopos escopo,LAParser.TipoContext ctx, TerminalNode ident){
-        TipoLA tipo = verificaTipo(escopo,ctx);
-        
-        if(tipo == TipoLA.REGISTRO){
+    public static TipoLA visitaParcelaNaoUnaria(Escopos escopo, LAParser.Parcela_nao_unarioContext ctx){
+        TipoLA tipoRetorno = TipoLA.INVALIDO;
+        if(ctx.CADEIA()!=null){
+            tipoRetorno = TipoLA.CADEIA;
+        }else{
+            if(escopo.obterEscopoAtual().existe(ctx.identificador().getText())){
+                tipoRetorno = escopo.obterEscopoAtual().verificar(ctx.identificador().getText());
+            }else{
+                adicionaErro("Linha "+ctx.identificador().getStart().getLine()+": identificador "+ctx.identificador().getText()+" nao declarado");
+            }
             
-            List<EntradaTabelaDeSimbolos> variaveis = new ArrayList<>();
-            LAParser.RegistroContext reg = ctx.registro();
-            for( LAParser.VariavelContext var : reg.variavel() ){
-                for(LAParser.IdentificadorContext id: var.identificador()){
-                    System.out.println(var.identificador());
-                    System.out.println(var.tipo().getText());
-                    escopo.obterEscopoAtual().adicionaTipo(id.getText(), verificaTipo(escopo,var.tipo()));
-                    variaveis.add(escopo.obterEscopoAtual().getTipoCustomizado(id.getText()));
+        }
+        return tipoRetorno;
+    }
+    public static Escopos visitaVariavel(Escopos escopo, LAParser.VariavelContext ctx){
+        for(LAParser.IdentificadorContext ident: ctx.identificador()){
+            String identificadorNome = ident.getText();
+            if(!escopo.obterEscopoAtual().existe(identificadorNome)){
+                
+                TipoLA tipo = verificaTipo(escopo,ctx.tipo());
+                
+                escopo = adicionaVariavel(escopo,identificadorNome,tipo,ctx.tipo());
+                
+            }else{
+                adicionaErro("Linha "+ident.getStart().getLine()+": identificador "+ ident.getStart().getText() +" ja declarado anteriormente");         
+            }
+            
+            
+        }
+        return escopo;
+    }
+    
+    public static Escopos adicionaVariavel(Escopos escopo, String identificador,TipoLA tipo, LAParser.TipoContext ctx){
+        if(tipo == TipoLA.CADEIA || tipo == TipoLA.INTEIRO || tipo == TipoLA.REAL || tipo == TipoLA.LOGICO || tipo == TipoLA.INVALIDO){
+            escopo.obterEscopoAtual().adicionar(identificador, tipo);
+        }
+        
+        return escopo;
+    }
+    
+    public static TipoLA verificaTipo(Escopos escopo,LAParser.TipoContext ctx){
+        TipoLA tipoRetorno = TipoLA.INVALIDO;
+        if(ctx.tipo_estendido()!= null){
+            tipoRetorno = verificaTipo(escopo,ctx.tipo_estendido());
+        }else{//registro
+            
+        }
+        return tipoRetorno;
+    }
+    
+    public static TipoLA verificaTipo(Escopos escopo,LAParser.Tipo_estendidoContext ctx){
+        TipoLA tipoRetorno = TipoLA.INVALIDO;
+        if(ctx.getStart().equals("^")){
+            //ponteiro
+        }else{
+            tipoRetorno = verificaTipo(escopo,ctx.tipo_basico_ident());
+        }
+        return tipoRetorno; 
+    }
+    
+    public static TipoLA verificaTipo(Escopos escopo,LAParser.Tipo_basico_identContext ctx){
+        TipoLA tipoRetorno = TipoLA.INVALIDO;
+        if(ctx.tipo_basico()!=null){
+            String tipoBasico = ctx.tipo_basico().getText();
+            switch(tipoBasico){
+                case("inteiro"):
+                    tipoRetorno = TipoLA.INTEIRO;
+                    break;
+                case("real"):
+                    tipoRetorno = TipoLA.REAL;
+                    break;
+                case("literal"):
+                    tipoRetorno = TipoLA.CADEIA;
+                    break;
+                case("logico"):
+                    tipoRetorno = TipoLA.LOGICO;
+                    break;
+            }
+        }else{
+            //tipo ident
+            //verifica tipo de registro
+            if(escopo.obterEscopoAtual().existeTipo(ctx.IDENT().getText())){
+                
+            }else{
+                tipoRetorno = TipoLA.INVALIDO;
+                adicionaErro("Linha "+ctx.IDENT().getSymbol().getLine()+": tipo "+ctx.IDENT().getText()+" nao declarado");
+            }
+            
+        }
+        return tipoRetorno; 
+    }
+    
+    public static TipoLA visitaIdentificador(Escopos escopo, LAParser.IdentificadorContext ctx){
+        TipoLA tipoRetorno = TipoLA.INVALIDO;
+        if(escopo.obterEscopoAtual().existe(ctx.getText())){
+            tipoRetorno = escopo.obterEscopoAtual().verificar(ctx.getText());
+        }
+        return tipoRetorno; 
+    }
+    
+    public static boolean verificaTiposCompativeis(TipoLA tipoA, TipoLA tipoB){
+        boolean ehCompativel = true;
+        if(tipoA == TipoLA.INVALIDO || tipoB == TipoLA.INVALIDO){
+            ehCompativel = false;
+        }else{
+            if(tipoA != tipoB){
+                if(!((tipoA == TipoLA.REAL || tipoA == TipoLA.INTEIRO) && (tipoB == TipoLA.REAL || tipoB == TipoLA.INTEIRO))){
+                    ehCompativel = false;
                 }
                 
             }
-            escopo.obterEscopoAtual().adicionaTipo(ident.getText(),variaveis);
-            
-            escopo.obterEscopoAtual().adicionar(ident.getText(), TipoLA.CUSTOMIZADO);
-            
-            
-            
         }
         
-        return escopo;
+        return ehCompativel;
+    }
+    
+    public static boolean verificaTiposCompativeis(List<TipoLA> tipos){
+        boolean ehCompativel = false;
+        if(!tipos.contains(TipoLA.INVALIDO)){
+            if(tipos.contains(TipoLA.INTEIRO) ||tipos.contains(TipoLA.REAL)){
+                if(!(tipos.contains(TipoLA.CADEIA) || tipos.contains(TipoLA.CUSTOMIZADO) || tipos.contains(TipoLA.LOGICO) ||  tipos.contains(TipoLA.REGISTRO))){
+                    ehCompativel = true;
+                }
+            }else{
+                if(tipos.contains(TipoLA.CADEIA)){
+                    if(!(tipos.contains(TipoLA.CUSTOMIZADO) || tipos.contains(TipoLA.LOGICO) ||  tipos.contains(TipoLA.REGISTRO))){
+                        ehCompativel = true;
+                    }
+                }else
+                if(tipos.contains(TipoLA.CUSTOMIZADO)){
+                    if(!(tipos.contains(TipoLA.CADEIA) || tipos.contains(TipoLA.LOGICO) ||  tipos.contains(TipoLA.REGISTRO))){
+                        ehCompativel = true;
+                    }
+                }else
+                if(tipos.contains(TipoLA.LOGICO)){
+                    if(!(tipos.contains(TipoLA.CADEIA) || tipos.contains(TipoLA.CUSTOMIZADO) ||  tipos.contains(TipoLA.REGISTRO))){
+                        ehCompativel = true;
+                    }
+                }
+                else
+                if(tipos.contains(TipoLA.REGISTRO)){
+                    if(!(tipos.contains(TipoLA.CADEIA) || tipos.contains(TipoLA.CUSTOMIZADO) || tipos.contains(TipoLA.LOGICO) )){
+                        ehCompativel = true;
+                    }
+                }
+            }
+           
+        }
+        
+        
+        return ehCompativel;
     }
 }

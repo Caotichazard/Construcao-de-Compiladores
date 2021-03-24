@@ -16,96 +16,40 @@ public class LASemantico extends LABaseVisitor<Void> {
         escopo = new Escopos();
         return super.visitPrograma(ctx);
     }
-
+    
     @Override
-    public Void visitDeclaracao_global(LAParser.Declaracao_globalContext ctx) {
-        System.out.println("decl global\n");
-        return super.visitDeclaracao_global(ctx);
-    }
-
-    @Override
-    public Void visitDeclaracao_local(LAParser.Declaracao_localContext ctx) {
-        String decl = ctx.getStart().getText();
-        switch (decl) {
-            case ("declare"):
-                System.out.println("declare");
-                escopo = LASemanticoUtils.verificaVariavel(escopo, ctx.variavel());
-                break;
-            case("tipo"):
-                
-                escopo = LASemanticoUtils.verificaTipoNovo(escopo,ctx.tipo(), ctx.IDENT());
-        }
-        return super.visitDeclaracao_local(ctx);
-    }
-
-    @Override
-    public Void visitCmd_atribuicao(LAParser.Cmd_atribuicaoContext ctx) {
-        List<TipoLA> membrosAtribuicao = new ArrayList<>();
-        LAParser.ExpressaoContext exp = ctx.expressao();
-        LAParser.IdentificadorContext ident = ctx.identificador();
-        TipoLA tipo = escopo.obterEscopoAtual().verificar(ident.getText());
-        membrosAtribuicao.add(tipo);
-        membrosAtribuicao.add(LASemanticoUtils.verificaExpressao(escopo,ctx.expressao()));
-        System.out.println("cmd = " + ident.getText() + " de tipo "+ tipo + " <- " + exp.getText());
-        System.out.println(membrosAtribuicao);
-        if (!LASemanticoUtils.tiposCompativeis(membrosAtribuicao)){
-            System.out.println(ctx.getText());
-            if(ctx.getText().contains("^")){
-                LASemanticoUtils.adicionaErro("Linha " + ctx.identificador().getStart().getLine() + ": atribuicao nao compativel para ^" + ident.getText());
-            }else{
-                LASemanticoUtils.adicionaErro("Linha " + ctx.identificador().getStart().getLine() + ": atribuicao nao compativel para " + ident.getText());
-            }
-            
+    public Void visitDecl_global_local(LAParser.Decl_global_localContext ctx){
+        if(ctx.declaracao_global()!=null){
+            escopo = LASemanticoUtils.visitaDeclGlobal(escopo,ctx.declaracao_global());
+        }else{
+            escopo = LASemanticoUtils.visitaDeclLocal(escopo, ctx.declaracao_local());
         }
         
-        return super.visitCmd_atribuicao(ctx);
+        
+        return super.visitDecl_global_local(ctx);
     }
 
     @Override
-    public Void visitIdentificador(LAParser.IdentificadorContext ctx) {
-        int totalIdents = ctx.IDENT().size();
-        if(totalIdents > 1){
-            String identFull = "";
-            Token identAux = null;
-            int count = 0;
-            for (TerminalNode value : ctx.IDENT()) {
-                Token ident = value.getSymbol();
-                identFull += ident.getText();
-                if (count < totalIdents -1){
-                    identFull+=".";
-                }
-                if(count == 0){
-                    identAux = ident;
-                }
-                count++;
-            }
-            
-            boolean existeIDENT = escopo.obterEscopoAtual().existe(identFull);
-                if (!existeIDENT) {
-                    LASemanticoUtils.adicionaErro("Linha " + identAux.getLine() + ": identificador " + identFull + " nao declarado");
-                }
-        }else{
-            if(!ctx.getParent().getParent().getText().contains("registro")){
-                for (TerminalNode value : ctx.IDENT()) {
-                Token ident = value.getSymbol();
-                System.out.println("ident=" + ident.getText());
-                boolean existeIDENT = escopo.obterEscopoAtual().existe(ident.getText());
-                if (!existeIDENT) {
-                    LASemanticoUtils.adicionaErro("Linha " + ident.getLine() + ": identificador " + ident.getText() + " nao declarado");
-                }
-            }
-            }
-            
-        }
-        return super.visitIdentificador(ctx);
+    public Void visitCorpo(LAParser.CorpoContext ctx){
+        
+            for(LAParser.Declaracao_localContext decl: ctx.declaracao_local())
+                escopo = LASemanticoUtils.visitaDeclLocal(escopo, decl);
+        
+        
+            for(LAParser.CmdContext cmd: ctx.cmd())
+                escopo = LASemanticoUtils.visitaCmd(escopo, cmd);
+        
+        return super.visitCorpo(ctx);
     }
 
-    @Override
-    public Void visitTipo(LAParser.TipoContext ctx) {
-        TipoLA tipoVar = LASemanticoUtils.verificaTipo(escopo,ctx);
-        if (tipoVar == TipoLA.INVALIDO) {
-            LASemanticoUtils.adicionaErro("Linha " + ctx.getStart().getLine() + ": tipo " + ctx.getStart().getText() + " nao declarado");
-        }
-        return super.visitTipo(ctx);
-    }
+    
+    
+    
+    
+
+    
+
+    
+
+   
 }

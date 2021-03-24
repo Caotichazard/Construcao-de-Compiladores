@@ -9,6 +9,7 @@ package br.ufscar.dc.compiladores.la.lexico;
  *
  * @author salomao
  */
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ public class TabelaDeSimbolos {
         REGISTRO,
         PONTEIRO,
         CUSTOMIZADO,
+        FUNCAO,
         INVALIDO
     }
     
@@ -31,6 +33,7 @@ public class TabelaDeSimbolos {
         
         abstract public TipoLA getTipo();
         abstract public List<EntradaTabelaDeSimbolos> getCampos();
+        abstract public List<TipoLA> getParametros();
     }
     
     class Variavel extends EntradaTabelaDeSimbolos{
@@ -47,6 +50,9 @@ public class TabelaDeSimbolos {
         }
         
         public List<EntradaTabelaDeSimbolos> getCampos(){
+            return null;
+        };
+        public List<TipoLA> getParametros(){
             return null;
         };
         
@@ -73,7 +79,9 @@ public class TabelaDeSimbolos {
         public List<EntradaTabelaDeSimbolos> getCampos(){
             return null;
         };
-        
+        public List<TipoLA> getParametros(){
+            return null;
+        };
         
     }
     
@@ -93,6 +101,31 @@ public class TabelaDeSimbolos {
         public List<EntradaTabelaDeSimbolos> getCampos(){
             return this.campos;
         }
+        public List<TipoLA> getParametros(){
+            return null;
+        };
+    }
+    class Funcao extends EntradaTabelaDeSimbolos{
+        
+        List<TipoLA> parametros;
+        TipoLA retorno;
+        public Funcao(String nome, List<TipoLA> parametros, TipoLA retorno){
+            super.nome = nome;
+            this.parametros = parametros;
+            this.retorno = retorno;
+        }
+        
+        public TipoLA getTipo(){
+            return this.retorno;
+        }
+        
+        public List<EntradaTabelaDeSimbolos> getCampos(){
+            return null;
+        }
+        
+        public List<TipoLA> getParametros(){
+            return this.parametros;
+        }
     }
     
     private final Map<String, EntradaTabelaDeSimbolos> tabela;
@@ -108,7 +141,7 @@ public class TabelaDeSimbolos {
     
     
     public void adicionar(String nome, TipoLA tipo) {
-        System.out.println("Adicionando variavel");
+        System.out.println("Adicionando variavel "+nome);
         tabela.put(nome, new Variavel(nome, tipo));
     }
     
@@ -119,6 +152,11 @@ public class TabelaDeSimbolos {
     public void adicionar(String nome, List<EntradaTabelaDeSimbolos> campos){
         System.out.println("Adicionando registro");
         tabela.put(nome, new Registro(nome,campos));
+    }
+    public void adicionar(String nome, List<TipoLA> campos, TipoLA retorno){
+        System.out.println("Adicionando funcao "+ nome);
+        System.out.println(campos);
+        tabela.put(nome, new Funcao(nome,campos,retorno));
     }
     
     public boolean existe(String nome) {
@@ -132,6 +170,8 @@ public class TabelaDeSimbolos {
     }
     
     public EntradaTabelaDeSimbolos getEntrada(String nome){
+        System.out.println("Buscando elemento com nome = " + nome);
+        System.out.println("Tipo do elemento = " + tabela.get(nome).getTipo());
         return tabela.get(nome);
     }
     
