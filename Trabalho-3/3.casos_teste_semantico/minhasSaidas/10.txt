@@ -1,2 +1,2 @@
-Linha 14: atribuicao nao compativel para ponteiro
+Linha 14: atribuicao nao compativel para ^ponteiro
 Fim da compilacao

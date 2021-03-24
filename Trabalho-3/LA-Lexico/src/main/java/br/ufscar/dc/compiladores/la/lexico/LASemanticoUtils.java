@@ -33,6 +33,10 @@ public class LASemanticoUtils {
                 System.out.println(inicio);
                 escopo = visitaVariavel(escopo, ctx.variavel());
                 break;
+            case("tipo"):
+                System.out.println(inicio);
+                
+                break;
         }
                 
                     
@@ -96,14 +100,20 @@ public class LASemanticoUtils {
     }
     
     public static void verificaCmdAtribuicao(Escopos escopo, LAParser.Cmd_atribuicaoContext ctx){
-        TipoLA tipoIdent = visitaIdentificador(escopo,ctx.identificador()) ;
+        String ident;
+        if(ctx.getStart().getText().contains("^")){
+            ident = "^" + ctx.identificador().getText();
+        }else{
+            ident = ctx.identificador().getText();
+        }
+        TipoLA tipoIdent = visitaIdentificador(escopo,ident);
         TipoLA tipoExp = visitaExpressao(escopo,ctx.expressao());
         System.out.print(tipoIdent);
         System.out.print("  ");
         System.out.println(tipoExp);
         System.out.println(verificaTiposCompativeis(tipoIdent,tipoExp));
         if(!verificaTiposCompativeis(tipoIdent,tipoExp)){
-            adicionaErro("Linha "+ctx.identificador().getStart().getLine()+": atribuicao nao compativel para " + ctx.identificador().getText());
+            adicionaErro("Linha "+ctx.identificador().getStart().getLine()+": atribuicao nao compativel para " + ident);
         }
     }
     public static void verificaCmdLeia(Escopos escopo, LAParser.Cmd_leiaContext ctx){
@@ -311,8 +321,29 @@ public class LASemanticoUtils {
             if(!escopo.obterEscopoAtual().existe(identificadorNome)){
                 
                 TipoLA tipo = verificaTipo(escopo,ctx.tipo());
-                
+               
                 escopo = adicionaVariavel(escopo,identificadorNome,tipo,ctx.tipo());
+               
+                
+                
+            }else{
+                adicionaErro("Linha "+ident.getStart().getLine()+": identificador "+ ident.getStart().getText() +" ja declarado anteriormente");         
+            }
+            
+            
+        }
+        return escopo;
+    }
+    public static Escopos visitaVariavel(Escopos escopo, LAParser.VariavelContext ctx, String identificador){
+        for(LAParser.IdentificadorContext ident: ctx.identificador()){
+            String identificadorNome = identificador+ "." + ident.getText();
+            if(!escopo.obterEscopoAtual().existe(identificadorNome)){
+                
+                TipoLA tipo = verificaTipo(escopo,ctx.tipo());
+               
+                escopo = adicionaVariavel(escopo,identificadorNome,tipo,ctx.tipo());
+               
+                
                 
             }else{
                 adicionaErro("Linha "+ident.getStart().getLine()+": identificador "+ ident.getStart().getText() +" ja declarado anteriormente");         
@@ -324,8 +355,20 @@ public class LASemanticoUtils {
     }
     
     public static Escopos adicionaVariavel(Escopos escopo, String identificador,TipoLA tipo, LAParser.TipoContext ctx){
+        System.out.println(tipo);
         if(tipo == TipoLA.CADEIA || tipo == TipoLA.INTEIRO || tipo == TipoLA.REAL || tipo == TipoLA.LOGICO || tipo == TipoLA.INVALIDO){
             escopo.obterEscopoAtual().adicionar(identificador, tipo);
+        }
+        if(tipo == TipoLA.PONTEIRO){
+            
+            escopo.obterEscopoAtual().adicionar("^"+identificador, tipo);
+            escopo.obterEscopoAtual().adicionar(identificador, verificaTipo(escopo,ctx.tipo_estendido().tipo_basico_ident()));
+        }
+        if(tipo == TipoLA.REGISTRO){
+            System.out.println("EH O REGS");
+            for(LAParser.VariavelContext var : ctx.registro().variavel()){
+                visitaVariavel(escopo, var, identificador);
+            }
         }
         
         return escopo;
@@ -336,15 +379,16 @@ public class LASemanticoUtils {
         if(ctx.tipo_estendido()!= null){
             tipoRetorno = verificaTipo(escopo,ctx.tipo_estendido());
         }else{//registro
-            
+            tipoRetorno = TipoLA.REGISTRO;
         }
         return tipoRetorno;
     }
     
     public static TipoLA verificaTipo(Escopos escopo,LAParser.Tipo_estendidoContext ctx){
         TipoLA tipoRetorno = TipoLA.INVALIDO;
-        if(ctx.getStart().equals("^")){
-            //ponteiro
+        if(ctx.getStart().getText().contains("^")){
+            System.out.println("EH O PONTAS");
+            tipoRetorno = TipoLA.PONTEIRO;
         }else{
             tipoRetorno = verificaTipo(escopo,ctx.tipo_basico_ident());
         }
@@ -387,6 +431,13 @@ public class LASemanticoUtils {
         TipoLA tipoRetorno = TipoLA.INVALIDO;
         if(escopo.obterEscopoAtual().existe(ctx.getText())){
             tipoRetorno = escopo.obterEscopoAtual().verificar(ctx.getText());
+        }
+        return tipoRetorno; 
+    }
+    public static TipoLA visitaIdentificador(Escopos escopo, String ident){
+        TipoLA tipoRetorno = TipoLA.INVALIDO;
+        if(escopo.obterEscopoAtual().existe(ident)){
+            tipoRetorno = escopo.obterEscopoAtual().verificar(ident);
         }
         return tipoRetorno; 
     }
