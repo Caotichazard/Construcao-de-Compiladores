@@ -34,6 +34,9 @@ public class TabelaDeSimbolos {
         abstract public TipoLA getTipo();
         abstract public List<EntradaTabelaDeSimbolos> getCampos();
         abstract public List<TipoLA> getParametros();
+        public String getNome(){
+            return this.nome;
+        };
     }
     
     class Variavel extends EntradaTabelaDeSimbolos{

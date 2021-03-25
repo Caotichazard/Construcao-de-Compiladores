@@ -1,4 +1,4 @@
-# Trabalho 2 
+# Trabalho 3 
 
 este diretório corresponde ao Trabalho 2 da matéria de Construção de compiladores
 
@@ -9,8 +9,10 @@ este diretório corresponde ao Trabalho 2 da matéria de Construção de compila
 Segue links para acesso rapido a arquivos importantes:
 - [.jar principal](https://github.com/Caotichazard/Construcao-de-Compiladores/blob/main/Trabalho-2/LA-Lexico/target/LA-Lexico-1.0-SNAPSHOT-jar-with-dependencies.jar)
 - [Gramatica](https://github.com/Caotichazard/Construcao-de-Compiladores/blob/main/Trabalho-2/LA-Lexico/src/main/antlr4/br/ufscar/dc/compiladores/la/lexico/LA.g4) 
-- [Classe Principal](https://github.com/Caotichazard/Construcao-de-Compiladores/blob/main/Trabalho-2/LA-Lexico/src/main/java/br/ufscar/dc/compiladores/la/lexico/Principal.java)
-- [Classe MyErrorListener](https://github.com/Caotichazard/Construcao-de-Compiladores/blob/main/Trabalho-2/LA-Lexico/src/main/java/br/ufscar/dc/compiladores/la/lexico/MyErrorListener.java)
+- [Classe Principal](https://github.com/Caotichazard/Construcao-de-Compiladores/blob/main/Trabalho-3/LA-Lexico/src/main/java/br/ufscar/dc/compiladores/la/lexico/Principal.java)
+- [Classe da Tabela de Simbolos](https://github.com/Caotichazard/Construcao-de-Compiladores/blob/main/Trabalho-3/LA-Lexico/src/main/java/br/ufscar/dc/compiladores/la/lexico/TabelaDeSimbolos.java)
+- [Classe dos Escopos](https://github.com/Caotichazard/Construcao-de-Compiladores/blob/main/Trabalho-3/LA-Lexico/src/main/java/br/ufscar/dc/compiladores/la/lexico/Escopos.java)
+- [Classe Utiliátios Semanticos](https://github.com/Caotichazard/Construcao-de-Compiladores/blob/main/Trabalho-3/LA-Lexico/src/main/java/br/ufscar/dc/compiladores/la/lexico/LASemanticoUtils.java)
 
 ## Dependencias
 Este projeto foi feito com Java utilizando Maven, para isso é necessário:

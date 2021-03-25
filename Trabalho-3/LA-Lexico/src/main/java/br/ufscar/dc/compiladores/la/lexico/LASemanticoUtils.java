@@ -20,10 +20,64 @@ public class LASemanticoUtils {
     }
     
     public static Escopos visitaDeclGlobal(Escopos escopo, LAParser.Declaracao_globalContext ctx){
-        
-        
+        String inicio = ctx.getStart().getText();
+        switch(inicio){
+            case("funcao"):
+                System.out.println(inicio);
+                escopo = visitaFuncao(escopo,ctx);
+                break;
+            case("procedimento"):
+                System.out.println(inicio);
+                
+                break;
+        }
         return escopo;
     }
+    
+    public static Escopos visitaFuncao(Escopos escopo, LAParser.Declaracao_globalContext ctx){
+        String funcName = ctx.IDENT().getText();
+        System.out.println(funcName);
+        List<TipoLA> tiposParametros = new ArrayList<>();
+        TipoLA tipoRetorno = verificaTipo(escopo,ctx.tipo_estendido());
+        escopo.criarNovoEscopo();
+        
+        if(ctx.parametros() != null){
+            for(LAParser.ParametroContext param:ctx.parametros().parametro()){
+                TipoLA paramTipo = verificaTipo(escopo,param.tipo_estendido());
+                for(LAParser.IdentificadorContext ident: param.identificador()){
+                    escopo.obterEscopoAtual().adicionar(ident.getText(), paramTipo);
+                    tiposParametros.add(paramTipo);
+                }
+            }
+        }
+        
+        if(ctx.declaracao_local() != null){
+            for(LAParser.Declaracao_localContext decl: ctx.declaracao_local()){
+                escopo = visitaDeclLocal(escopo,decl);
+            }
+        }
+        
+        if(ctx.cmd()!= null){
+            for(LAParser.CmdContext cmd: ctx.cmd()){
+                escopo = visitaCmd(escopo,cmd);
+                if(cmd.cmd_retorne()!=null){
+                    TipoLA tipoCmdRetorno = visitaExpressao(escopo,cmd.cmd_retorne().expressao());
+                    if(tipoCmdRetorno != tipoRetorno){
+                        adicionaErro("");
+                    }
+                }
+            }
+        }
+        
+        
+        
+        escopo.abandonarEscopo();
+        
+        escopo.obterEscopoAtual().adicionar(funcName,tiposParametros, tipoRetorno);
+        return escopo;
+    }
+    
+   
     
     public static Escopos visitaDeclLocal(Escopos escopo, LAParser.Declaracao_localContext ctx){
         String inicio = ctx.getStart().getText();
@@ -35,11 +89,31 @@ public class LASemanticoUtils {
                 break;
             case("tipo"):
                 System.out.println(inicio);
-                
+                escopo = visitaTipo(escopo, ctx.IDENT(),ctx.tipo());
                 break;
         }
                 
                     
+        return escopo;
+    }
+    
+    public static Escopos visitaTipo(Escopos escopo, TerminalNode ident, LAParser.TipoContext ctx){
+        TipoLA tipo = verificaTipo(escopo,ctx);
+        System.out.println(tipo);
+        
+        if(tipo == TipoLA.REGISTRO){
+            List<EntradaTabelaDeSimbolos> variaveis = new ArrayList<>();
+            for(LAParser.VariavelContext var: ctx.registro().variavel()){
+                for(LAParser.IdentificadorContext varIdent: var.identificador()){
+                    escopo.obterEscopoAtual().adicionaTipo(varIdent.getText(), verificaTipo(escopo,var.tipo()));
+                    variaveis.add(escopo.obterEscopoAtual().getTipoCustomizado(varIdent.getText()));
+                }
+            }
+            
+            escopo.obterEscopoAtual().adicionaTipo(ident.getText(), variaveis);
+            escopo.obterEscopoAtual().adicionar(ident.getText(), TipoLA.CUSTOMIZADO);
+        }
+        
         return escopo;
     }
     
@@ -69,13 +143,15 @@ public class LASemanticoUtils {
             verificaCmdEnquanto(escopo,ctx.cmd_enquanto());
         }
         if(ctx.cmd_faca()!=null){
-            
+            System.out.println("faca");
+            verificaCmdFaca(escopo,ctx.cmd_faca());
         }
         if(ctx.cmd_para()!=null){
             
         }
         if(ctx.cmd_retorne()!=null){
-            
+            System.out.println("retorne");
+            verificaCmdRetorne(escopo,ctx.cmd_retorne());
         }
         if(ctx.cmd_se()!=null){
             System.out.println("se");
@@ -84,7 +160,15 @@ public class LASemanticoUtils {
         
         return escopo;
     }
-    
+    public static void verificaCmdRetorne(Escopos escopo, LAParser.Cmd_retorneContext ctx){
+        TipoLA expTipo = visitaExpressao(escopo,ctx.expressao());
+    }
+    public static void verificaCmdFaca(Escopos escopo, LAParser.Cmd_facaContext ctx){
+        TipoLA expTipo = visitaExpressao(escopo,ctx.expressao());
+        for(LAParser.CmdContext cmd: ctx.cmd()){
+            visitaCmd(escopo,cmd);
+        }
+    }
     public static void verificaCmdEnquanto(Escopos escopo, LAParser.Cmd_enquantoContext ctx){
         TipoLA expTipo = visitaExpressao(escopo,ctx.expressao());
         for(LAParser.CmdContext cmd: ctx.cmd()){
@@ -292,7 +376,16 @@ public class LASemanticoUtils {
             }
         }
         if(ctx.IDENT()!=null){
-            System.out.println("numsei oq to fazendo");
+            System.out.println("Chamando " + ctx.IDENT().getText());
+            List<TipoLA> tiposParametros = new ArrayList<>();
+            for(LAParser.ExpressaoContext exp: ctx.expressao()){
+                tiposParametros.add(visitaExpressao(escopo,exp));
+            }
+            System.out.println(tiposParametros);
+            if(!escopo.obterEscopoAtual().getEntrada(ctx.IDENT().getText()).getParametros().equals(tiposParametros)){
+                adicionaErro("Linha "+ctx.IDENT().getSymbol().getLine()+": incompatibilidade de parametros na chamada de "+ctx.IDENT().getText());
+            }
+            tipoRetorno = escopo.obterEscopoAtual().getEntrada(ctx.IDENT().getText()).getTipo();
         }else{
             for(LAParser.ExpressaoContext exp: ctx.expressao()){
                 tipoRetorno = visitaExpressao(escopo,exp);
@@ -340,8 +433,12 @@ public class LASemanticoUtils {
             if(!escopo.obterEscopoAtual().existe(identificadorNome)){
                 
                 TipoLA tipo = verificaTipo(escopo,ctx.tipo());
-               
-                escopo = adicionaVariavel(escopo,identificadorNome,tipo,ctx.tipo());
+                if(ident.dimensao()!=null){
+                    System.out.println(ident.dimensao().getText());
+                }else{
+                    escopo = adicionaVariavel(escopo,identificadorNome,tipo,ctx.tipo());
+                }
+                
                
                 
                 
@@ -365,10 +462,21 @@ public class LASemanticoUtils {
             escopo.obterEscopoAtual().adicionar(identificador, verificaTipo(escopo,ctx.tipo_estendido().tipo_basico_ident()));
         }
         if(tipo == TipoLA.REGISTRO){
-            System.out.println("EH O REGS");
+            
             for(LAParser.VariavelContext var : ctx.registro().variavel()){
                 visitaVariavel(escopo, var, identificador);
             }
+        }
+        if(tipo == TipoLA.CUSTOMIZADO){
+            System.out.println("OIA O CUSTOM");
+            System.out.println(identificador);
+            List<EntradaTabelaDeSimbolos> variaveis = escopo.obterEscopoAtual().getTipoCustomizado(ctx.getText()).getCampos();
+            for(EntradaTabelaDeSimbolos var: variaveis){
+                escopo = adicionaVariavel(escopo,identificador+"."+var.getNome(),var.getTipo(),ctx);
+            }
+            
+            escopo.obterEscopoAtual().adicionar(identificador, tipo);
+           
         }
         
         return escopo;
@@ -417,7 +525,7 @@ public class LASemanticoUtils {
             //tipo ident
             //verifica tipo de registro
             if(escopo.obterEscopoAtual().existeTipo(ctx.IDENT().getText())){
-                
+                tipoRetorno = TipoLA.CUSTOMIZADO;
             }else{
                 tipoRetorno = TipoLA.INVALIDO;
                 adicionaErro("Linha "+ctx.IDENT().getSymbol().getLine()+": tipo "+ctx.IDENT().getText()+" nao declarado");

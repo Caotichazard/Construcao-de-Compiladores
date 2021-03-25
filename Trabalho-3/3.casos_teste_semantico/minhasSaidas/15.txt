@@ -1,2 +1,7 @@
-Linha 65: tipo tVinho nao declarado
+Linha 52: tipo tVinho nao declarado
+Linha 55: identificador vinho.unidades nao declarado
+Linha 55: identificador vinho.preco nao declarado
+Linha 55: identificador vinho.unidades nao declarado
+Linha 55: identificador vinho.preco nao declarado
+
 Fim da compilacao
