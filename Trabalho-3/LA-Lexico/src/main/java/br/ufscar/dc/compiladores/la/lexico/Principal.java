@@ -1,5 +1,3 @@
-// Aluno: Marco Antônio Bernardi Grivol
-// RA:    758619
 package br.ufscar.dc.compiladores.la.lexico;
 
 import br.ufscar.dc.compiladores.la.lexico.LAParser.ProgramaContext;

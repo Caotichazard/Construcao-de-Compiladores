@@ -1,0 +1,42 @@
+defina objeto1 :
+    atributo 1 :CADEIA,
+    atributo 2 : NUMERO,
+fim_defina
+
+defina objeto2 :
+    atributo 1 : CADEIA,
+    atributo 2 : NUMERO,
+    atributo 3 : objeto1,
+    atributo 4 : SEQUENCIAL,
+    atributo 5 : NUMERO,
+    .
+    .
+    .
+    atributo N,
+fim_defina
+
+declare objeto1:
+    IDENT1 : {
+        atributo1 : valor1,
+        atributo2 : valor2,
+    },
+    IDENT2 : {
+        atributo1 : valor1,
+        atributo2 : valor2,
+    }
+fim_declare
+
+
+declare objeto2:
+    {
+        atributo 1 : valor1,
+        atributo 2: objeto1.valor1,
+        atributo 3: IDENT,
+        atributo 5: IDENT1.valor1 + IDENT2.valor2,
+        .
+        .
+        .
+        atributo N:valorN,
+    }
+    ...
+fim_declare
