@@ -18,11 +18,11 @@ Além disso, pela sua estrutura, extender ela para atender outros formatos como 
 
 ## Acesso rápido
 Segue links para acesso rapido a arquivos importantes:
-- [.jar principal](https://github.com/Caotichazard/Construcao-de-Compiladores/blob/main/Trabalho-2/LA-Lexico/target/LA-Lexico-1.0-SNAPSHOT-jar-with-dependencies.jar)
-- [Gramatica](https://github.com/Caotichazard/Construcao-de-Compiladores/blob/main/Trabalho-2/LA-Lexico/src/main/antlr4/br/ufscar/dc/compiladores/la/lexico/LA.g4) 
-- [Classe Principal](https://github.com/Caotichazard/Construcao-de-Compiladores/blob/main/Trabalho-3/LA-Lexico/src/main/java/br/ufscar/dc/compiladores/la/lexico/Principal.java)
-- [Classe da Tabela de Simbolos](https://github.com/Caotichazard/Construcao-de-Compiladores/blob/main/Trabalho-3/LA-Lexico/src/main/java/br/ufscar/dc/compiladores/la/lexico/TabelaDeSimbolos.java)
-- [Classe Utiliátios Semanticos](https://github.com/Caotichazard/Construcao-de-Compiladores/blob/main/Trabalho-3/LA-Lexico/src/main/java/br/ufscar/dc/compiladores/la/lexico/LASemanticoUtils.java)
+- [.jar principal](https://github.com/Caotichazard/Construcao-de-Compiladores/blob/main/Trabalho-4/LA-Lexico/target/LA-Lexico-1.0-SNAPSHOT-jar-with-dependencies.jar)
+- [Gramatica](https://github.com/Caotichazard/Construcao-de-Compiladores/blob/main/Trabalho-4/LA-Lexico/src/main/antlr4/br/ufscar/dc/compiladores/la/lexico/LA.g4) 
+- [Classe Principal](https://github.com/Caotichazard/Construcao-de-Compiladores/blob/main/Trabalho-4/LA-Lexico/src/main/java/br/ufscar/dc/compiladores/la/lexico/Principal.java)
+- [Classe da Tabela de Entradas](https://github.com/Caotichazard/Construcao-de-Compiladores/blob/main/Trabalho-4/LA-Lexico/src/main/java/br/ufscar/dc/compiladores/la/lexico/TabelaDeEntradas.java)
+- [Classe Utiliátios Semanticos](https://github.com/Caotichazard/Construcao-de-Compiladores/blob/main/Trabalho-4/LA-Lexico/src/main/java/br/ufscar/dc/compiladores/la/lexico/LASemanticoUtils.java)
 
 ## Dependencias
 Este projeto foi feito com Java utilizando Maven, para isso é necessário:
@@ -141,4 +141,4 @@ declare Livro:
 fim_declare
 ```
 
-caso queira entender mais como usa e ver mais exemplos práticos entre na secção de [Casos de Teste]()
+caso queira entender mais como usa e ver mais exemplos práticos entre na secção de [Casos de Teste](https://github.com/Caotichazard/Construcao-de-Compiladores/tree/main/Trabalho-4/casos_de_teste)
