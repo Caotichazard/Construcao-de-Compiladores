@@ -1,0 +1,29 @@
+{
+	"Livro": {
+		"Livro0" : {
+			"Nome" : "Rei das laminas",
+			"Genero" : "Ficção",
+			"Autor" : "Brian Staveley",
+			"Lancamento" : "12/12/12"
+		},
+		"Livro1" : {
+			"Nome" : "Senhor dos Aneis: A sociedade do Anel",
+			"Genero" : [
+				"Ficção",
+				"Aventura"
+			],
+			"Autor" : "Tolkien",
+			"Lancamento" : "12/12/12"
+		}
+	},
+	"Autor": {
+		"Staveley" : {
+			"Nome" : "Brian Staveley",
+			"Nascimento" : "01/01/01"
+		},
+		"Tolkien" : {
+			"Nome" : "J.R.R Tolkien",
+			"Nascimento" : "01/01/01"
+		}
+	}
+}

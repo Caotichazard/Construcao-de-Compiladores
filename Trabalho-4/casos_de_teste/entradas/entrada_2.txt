@@ -1,0 +1,42 @@
+defina Autor :
+    Nome : CADEIA,
+    Nascimento : DATA,
+    ID: NUMERO,
+fim_defina
+
+defina Livro :
+    Nome : CADEIA,
+    Genero : CADEIA,
+    Autor : CADEIA,
+    Lancamento : DATA,
+fim_defina
+
+declare Autor:
+    Staveley : {
+        Nome : "Brian Staveley",
+        Nascimento : 01/01/01,
+    },
+    Tolkien : {
+        Nome : "J.R.R Tolkien",
+        Nascimento : 01/01/01,
+    }
+fim_declare
+
+
+declare Livro:
+    _ : {
+        Nome : "Rei das laminas",
+        Genero : "Ficção",
+        Autor : Autor.Staveley.Nome,
+        Lancamento : 12/12/12,
+        
+    },
+    _ : {
+        Nome : "Senhor dos Aneis: A sociedade do Anel",
+        Genero : ["Ficção","Aventura",],
+        Autor : "Tolkien",
+        Lancamento : 12/12/12,
+        
+    },
+    
+fim_declare

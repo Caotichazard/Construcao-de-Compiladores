@@ -1,0 +1,32 @@
+{
+"Biblioteca": {
+"Biblioteca0" : {
+"Livros" : ["Rei das laminas","Senhor dos Aneis: A sociedade do Anel"]
+}
+}
+"Livro": {
+"Rei" : {
+"Nome" : "Rei das laminas",
+"Genero" : "Ficção",
+"Autor" : "Brian Staveley",
+"Lancamento" : "12/12/12"
+}
+,"Senhor" : {
+"Nome" : "Senhor dos Aneis: A sociedade do Anel",
+"Genero" : "Ficção",
+"Autor" : "J.R.R Tolkien",
+"Lancamento" : "12/12/12"
+}
+}
+"Autor": {
+"Staveley" : {
+"Nome" : "Brian Staveley",
+"Nascimento" : "01/01/01"
+}
+,"Tolkien" : {
+"Nome" : "J.R.R Tolkien",
+"Nascimento" : "01/01/01"
+}
+}
+}
+Fim da compilacao

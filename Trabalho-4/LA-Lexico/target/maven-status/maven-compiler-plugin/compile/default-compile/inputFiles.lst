@@ -1,10 +1,10 @@
 /home/salomao/Documentos/BCC/Compiladores/Construcao-de-Compiladores/Trabalho-4/LA-Lexico/target/generated-sources/antlr4/br/ufscar/dc/compiladores/la/lexico/LALexer.java
 /home/salomao/Documentos/BCC/Compiladores/Construcao-de-Compiladores/Trabalho-4/LA-Lexico/target/generated-sources/antlr4/br/ufscar/dc/compiladores/la/lexico/LAListener.java
 /home/salomao/Documentos/BCC/Compiladores/Construcao-de-Compiladores/Trabalho-4/LA-Lexico/src/main/java/br/ufscar/dc/compiladores/la/lexico/LASemantico.java
-/home/salomao/Documentos/BCC/Compiladores/Construcao-de-Compiladores/Trabalho-4/LA-Lexico/src/main/java/br/ufscar/dc/compiladores/la/lexico/Escopos.java
-/home/salomao/Documentos/BCC/Compiladores/Construcao-de-Compiladores/Trabalho-4/LA-Lexico/src/main/java/br/ufscar/dc/compiladores/la/lexico/TabelaDeSimbolos.java
+/home/salomao/Documentos/BCC/Compiladores/Construcao-de-Compiladores/Trabalho-4/LA-Lexico/src/main/java/br/ufscar/dc/compiladores/la/lexico/Exportador.java
 /home/salomao/Documentos/BCC/Compiladores/Construcao-de-Compiladores/Trabalho-4/LA-Lexico/target/generated-sources/antlr4/br/ufscar/dc/compiladores/la/lexico/LAVisitor.java
 /home/salomao/Documentos/BCC/Compiladores/Construcao-de-Compiladores/Trabalho-4/LA-Lexico/src/main/java/br/ufscar/dc/compiladores/la/lexico/LASemanticoUtils.java
+/home/salomao/Documentos/BCC/Compiladores/Construcao-de-Compiladores/Trabalho-4/LA-Lexico/src/main/java/br/ufscar/dc/compiladores/la/lexico/TabelaDeEntradas.java
 /home/salomao/Documentos/BCC/Compiladores/Construcao-de-Compiladores/Trabalho-4/LA-Lexico/src/main/java/br/ufscar/dc/compiladores/la/lexico/Principal.java
 /home/salomao/Documentos/BCC/Compiladores/Construcao-de-Compiladores/Trabalho-4/LA-Lexico/target/generated-sources/antlr4/br/ufscar/dc/compiladores/la/lexico/LABaseListener.java
 /home/salomao/Documentos/BCC/Compiladores/Construcao-de-Compiladores/Trabalho-4/LA-Lexico/target/generated-sources/antlr4/br/ufscar/dc/compiladores/la/lexico/LABaseVisitor.java

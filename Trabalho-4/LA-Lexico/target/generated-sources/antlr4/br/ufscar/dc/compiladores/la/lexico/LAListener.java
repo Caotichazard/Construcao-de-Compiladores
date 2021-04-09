@@ -18,25 +18,15 @@ public interface LAListener extends ParseTreeListener {
 	 */
 	void exitPrograma(LAParser.ProgramaContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link LAParser#definicoes}.
+	 * Enter a parse tree produced by {@link LAParser#declaracao}.
 	 * @param ctx the parse tree
 	 */
-	void enterDefinicoes(LAParser.DefinicoesContext ctx);
+	void enterDeclaracao(LAParser.DeclaracaoContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link LAParser#definicoes}.
+	 * Exit a parse tree produced by {@link LAParser#declaracao}.
 	 * @param ctx the parse tree
 	 */
-	void exitDefinicoes(LAParser.DefinicoesContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link LAParser#declaracoes}.
-	 * @param ctx the parse tree
-	 */
-	void enterDeclaracoes(LAParser.DeclaracoesContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link LAParser#declaracoes}.
-	 * @param ctx the parse tree
-	 */
-	void exitDeclaracoes(LAParser.DeclaracoesContext ctx);
+	void exitDeclaracao(LAParser.DeclaracaoContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link LAParser#definicao}.
 	 * @param ctx the parse tree
@@ -47,16 +37,6 @@ public interface LAListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDefinicao(LAParser.DefinicaoContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link LAParser#declaracao}.
-	 * @param ctx the parse tree
-	 */
-	void enterDeclaracao(LAParser.DeclaracaoContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link LAParser#declaracao}.
-	 * @param ctx the parse tree
-	 */
-	void exitDeclaracao(LAParser.DeclaracaoContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link LAParser#campo}.
 	 * @param ctx the parse tree
@@ -88,6 +68,26 @@ public interface LAListener extends ParseTreeListener {
 	 */
 	void exitValor(LAParser.ValorContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link LAParser#entradaSimples}.
+	 * @param ctx the parse tree
+	 */
+	void enterEntradaSimples(LAParser.EntradaSimplesContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link LAParser#entradaSimples}.
+	 * @param ctx the parse tree
+	 */
+	void exitEntradaSimples(LAParser.EntradaSimplesContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link LAParser#entradaVetor}.
+	 * @param ctx the parse tree
+	 */
+	void enterEntradaVetor(LAParser.EntradaVetorContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link LAParser#entradaVetor}.
+	 * @param ctx the parse tree
+	 */
+	void exitEntradaVetor(LAParser.EntradaVetorContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link LAParser#tipo}.
 	 * @param ctx the parse tree
 	 */
@@ -97,4 +97,24 @@ public interface LAListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitTipo(LAParser.TipoContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link LAParser#entrada}.
+	 * @param ctx the parse tree
+	 */
+	void enterEntrada(LAParser.EntradaContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link LAParser#entrada}.
+	 * @param ctx the parse tree
+	 */
+	void exitEntrada(LAParser.EntradaContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link LAParser#referencia}.
+	 * @param ctx the parse tree
+	 */
+	void enterReferencia(LAParser.ReferenciaContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link LAParser#referencia}.
+	 * @param ctx the parse tree
+	 */
+	void exitReferencia(LAParser.ReferenciaContext ctx);
 }

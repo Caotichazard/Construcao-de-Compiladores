@@ -28,25 +28,13 @@ public class LABaseListener implements LAListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDefinicoes(LAParser.DefinicoesContext ctx) { }
+	@Override public void enterDeclaracao(LAParser.DeclaracaoContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitDefinicoes(LAParser.DefinicoesContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterDeclaracoes(LAParser.DeclaracoesContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitDeclaracoes(LAParser.DeclaracoesContext ctx) { }
+	@Override public void exitDeclaracao(LAParser.DeclaracaoContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -59,18 +47,6 @@ public class LABaseListener implements LAListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitDefinicao(LAParser.DefinicaoContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterDeclaracao(LAParser.DeclaracaoContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitDeclaracao(LAParser.DeclaracaoContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -112,6 +88,30 @@ public class LABaseListener implements LAListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterEntradaSimples(LAParser.EntradaSimplesContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitEntradaSimples(LAParser.EntradaSimplesContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterEntradaVetor(LAParser.EntradaVetorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitEntradaVetor(LAParser.EntradaVetorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterTipo(LAParser.TipoContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -119,6 +119,30 @@ public class LABaseListener implements LAListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitTipo(LAParser.TipoContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterEntrada(LAParser.EntradaContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitEntrada(LAParser.EntradaContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterReferencia(LAParser.ReferenciaContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitReferencia(LAParser.ReferenciaContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

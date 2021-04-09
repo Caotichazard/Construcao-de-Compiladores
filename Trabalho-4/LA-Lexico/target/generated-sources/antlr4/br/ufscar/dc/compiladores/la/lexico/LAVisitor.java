@@ -17,29 +17,17 @@ public interface LAVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitPrograma(LAParser.ProgramaContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link LAParser#definicoes}.
+	 * Visit a parse tree produced by {@link LAParser#declaracao}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitDefinicoes(LAParser.DefinicoesContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LAParser#declaracoes}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDeclaracoes(LAParser.DeclaracoesContext ctx);
+	T visitDeclaracao(LAParser.DeclaracaoContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link LAParser#definicao}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitDefinicao(LAParser.DefinicaoContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link LAParser#declaracao}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDeclaracao(LAParser.DeclaracaoContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link LAParser#campo}.
 	 * @param ctx the parse tree
@@ -59,9 +47,33 @@ public interface LAVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitValor(LAParser.ValorContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link LAParser#entradaSimples}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEntradaSimples(LAParser.EntradaSimplesContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link LAParser#entradaVetor}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEntradaVetor(LAParser.EntradaVetorContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link LAParser#tipo}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitTipo(LAParser.TipoContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link LAParser#entrada}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEntrada(LAParser.EntradaContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link LAParser#referencia}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitReferencia(LAParser.ReferenciaContext ctx);
 }

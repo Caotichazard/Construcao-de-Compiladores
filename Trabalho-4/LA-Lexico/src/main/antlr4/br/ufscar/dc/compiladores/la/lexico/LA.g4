@@ -3,33 +3,42 @@ grammar LA;
 
 
 
-programa: definicoes declaracoes EOF;
+programa: (definicao)*  (declaracao)*;
 
-definicoes: (definicao)*;
 
-declaracoes: (declaracao)*;
+
+declaracao: 'declare' IDENT ':' (valores(',')?)* 'fim_declare';
+
+
 
 definicao: 'defina' IDENT ':' (campo)*  'fim_defina';
 
 
 
-declaracao: 'declare' IDENT ':' (valores)* 'fim_declare';
+
 
 campo: IDENT ':' tipo ',';
 
-valores: (IDENT)? ':' '{' (valor)* '}';
+valores: (IDENT ':')? '{' (valor)* '}';
 
-valor: IDENT ':' tipo ',';
+valor: IDENT ':' (entradaSimples | entradaVetor) ',';
 
-tipo: IDENT | 'CADEIA' | 'NUMERO' | DATA;
+entradaSimples: entrada;
 
-IDENT: ('a'..'z'|'A'..'Z')('a'..'z'|'A'..'Z'|'0'..'9'|'_')*;
+entradaVetor: '[' (entrada ',')* ']';
+
+tipo: 'CADEIA' | 'NUMERO' | 'DATA'| IDENT;
+
+entrada: NUM | CADEIA | DATA | referencia;
+
+referencia: ( IDENT ('.')?)+;
+
+IDENT: ('a'..'z'|'A'..'Z'|'0'..'9'|'_')* | ('_');
 
 DATA: ('0'..'9')?('0'..'9') '/' ('0'..'9')?('0'..'9') '/' ('0'..'9')+;
 
-NUM_INT	: ('0'..'9')+
-	;
-NUM_REAL	: ('0'..'9')+ ('.' ('0'..'9')+)?
+
+NUM	: ('0'..'9')+ ('.' ('0'..'9')+)?
 	;
 
 
