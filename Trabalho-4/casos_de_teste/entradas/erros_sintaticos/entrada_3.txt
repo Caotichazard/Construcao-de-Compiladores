@@ -1,0 +1,30 @@
+defina Autor :
+    Nome : CADEIA,
+    Nascimento : DATA,
+fim_defina
+
+defina Livro :
+    Nome : CADEIA,
+    Genero : NUMERO,
+    Autor : CADEIA,
+    Lancamento : DATA,
+fim_defina
+
+declare Autor:
+    Staveley : {
+        Nome : "Brian Staveley",
+        Nascimento : 01/01/01,
+    },
+    Tolkien : {
+        Nome : "J.R.R Tolkien",
+        Nascimento : 01/01/01,
+        
+    }
+     : {
+        Nome : "J.R.R Tolkien",
+        Nascimento : 01/01/01,
+        
+    }
+fim_declare
+
+

@@ -1,4 +1,4 @@
-defina Autor :
+defina  :
     Nome : CADEIA,
     Nascimento : DATA,
 fim_defina
